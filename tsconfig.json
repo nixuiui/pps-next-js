@@ -24,5 +24,5 @@
     }
   },
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/auth/reset-password.js", "src/pages/auth/request-password.js", "src/pages/auth/login.js", "src/pages/auth/reset-password.js", "src/pages/auth/request-password.js", "src/pages/auth/login.js", "src/Layouts/themes.js", "src/Layouts/SimpleLayout.js", "src/Layouts/index.js", "src/Layouts/Header.js", "src/Layouts/menuItem.js", "src/pages/index.js"]
 }
