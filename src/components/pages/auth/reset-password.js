@@ -6,26 +6,27 @@ import Link from 'next/link';
 import Layout from 'Layouts';
 import Auth, { Group } from 'components/Auth';
 import getRoute from 'helpers/route';
+import { language } from 'helpers/language';
 
 export default function Index() {
   return (
-    <Layout title="Reset Password">
-      <Auth title="Reset Password">
+    <Layout title={language().menu.resetPassword}>
+      <Auth title={language().menu.resetPassword}>
         <form>
           <InputGroup fullWidth>
-            <input type="password" placeholder="New Password" />
+            <input type="password" placeholder={language().placeholder.newPassword} />
           </InputGroup>
           <InputGroup fullWidth>
-            <input type="password" placeholder="Confirm Password" />
+            <input type="password" placeholder={language().placeholder.confirmPassword} />
           </InputGroup>
           <Group>
             <span></span>
             <Link href={getRoute("auth.login")}>
-              <a>Back to Login</a>
+              <a>{language().sentence.backToLogin}</a>
             </Link>
           </Group>
           <Button status="Success" type="button" shape="SemiRound" fullWidth>
-            Reset Password
+            {language().menu.resetPassword}
           </Button>
         </form>
       </Auth>

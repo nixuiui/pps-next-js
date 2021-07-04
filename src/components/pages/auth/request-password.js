@@ -7,6 +7,7 @@ import Layout from 'Layouts';
 import Auth, { Group } from 'components/Auth';
 import { useRouter } from 'next/router';
 import getRoute from 'helpers/route';
+import { language } from 'helpers/language';
 
 export default function Index() {
 
@@ -18,20 +19,20 @@ export default function Index() {
   }
 
   return (
-    <Layout title="Forgot Password">
-      <Auth title="Forgot Password" subTitle="Input your email address and follow the intruction sent to your email">
+    <Layout title={language().menu.forgotPassword}>
+      <Auth title={language().menu.forgotPassword} subTitle={language().subtitle.forgotPassword}>
         <form>
           <InputGroup fullWidth>
-            <input type="email" placeholder="Email Address" />
+            <input type="email" placeholder={language().placeholder.email} />
           </InputGroup>
           <Group>
             <span></span>
             <Link href={getRoute("auth.login")}>
-              <a>Back to Login</a>
+              <a>{language().sentence.backToLogin}</a>
             </Link>
           </Group>
           <Button status="Success" type="button" shape="SemiRound" fullWidth onClick={sendRequestPassword}>
-            Request Password
+            {language().menu.requestPassword}
           </Button>
         </form>
       </Auth>

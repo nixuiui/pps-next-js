@@ -1,84 +1,85 @@
 import { MenuItemType } from '@paljs/ui/types';
 import getRoute from 'helpers/route';
+import { language } from 'helpers/language';
 
 const items = [
   {
-    title: 'Home Page',
+    title: language().menu.home,
     icon: { name: 'home' },
     link: { href: getRoute('home') },
   },
   {
-    title: 'Payment Request',
+    title: language().menu.paymentRequest,
     icon: { name: 'credit-card-outline' },
     children: [
       {
-        title: 'Input Payment Data',
+        title: language().menu.inputPaymentData,
         link: { href: getRoute('input.payment.data') },
       },
       {
-        title: 'Statement Printing',
+        title: language().menu.statementPrinting,
         link: { href: getRoute('statement.printing') },
       },
     ],
   },
   {
-    title: 'Master Data',
+    title: language().menu.masterData,
     icon: { name: 'archive-outline' },
     children: [
       {
-        title: 'Payees',
+        title: language().menu.payees,
         link: { href: getRoute('payees') },
       },
       {
-        title: 'Users',
+        title: language().menu.users,
         link: { href: getRoute('users') },
       },
       {
-        title: 'Company',
+        title: language().menu.company,
         link: { href: getRoute('company') },
       },
       {
-        title: 'Account',
+        title: language().menu.account,
         link: { href: getRoute('account') },
       },
       {
-        title: 'General',
+        title: language().menu.general,
         link: { href: getRoute('general') },
       },
       {
-        title: 'Template',
+        title: language().menu.template,
         link: { href: getRoute('template') },
       },
     ],
   },
   {
-    title: 'Accountintg',
+    title: language().menu.accounting,
     icon: { name: 'bar-chart-outline' },
     children: [
       {
-        title: 'Deadline Processing',
+        title: language().menu.deadlineProcessing,
         link: { href: getRoute('deadline.processing') },
       },
       {
-        title: 'Payment Planning',
+        title: language().menu.paymentPlanning,
         link: { href: getRoute('payment.planning') },
       },
       {
-        title: 'Payment Confirmation',
+        title: language().menu.paymentConfirmation,
         link: { href: getRoute('payment.confirmation') },
       },
     ],
   },
   {
-    title: 'Export',
+    title: language().menu.export,
     icon: { name: 'download' },
     children: [
       {
-        title: 'Export Data for Bank Transfer',
+        title: language().menu.exportDataForBankTransfer,
         link: { href: getRoute('export.bank.transfer') },
       },
       {
-        title: 'Export Data for TKC',
+        title: language().menu.exportDataForTkc,
         link: { href: getRoute('export.tkc') },
       },
     ],

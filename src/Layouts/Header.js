@@ -10,6 +10,7 @@ import { Actions } from '@paljs/ui/Actions';
 import ContextMenu from '@paljs/ui/ContextMenu';
 import User from '@paljs/ui/User';
 import { breakpointDown } from '@paljs/ui/breakpoints';
+import { language, getLanguage, setLanguage } from 'helpers/language';
 
 const HeaderStyle = styled.div`
   display: flex;
@@ -51,6 +52,29 @@ const SelectStyled = styled(Select)`
 
 const Header = (props) => {
   const router = useRouter();
+
+  var lang = getLanguage()
+  const languageOptions = () => [
+    {
+      value: 'en',
+      label: (
+        <Label>
+          <img src="assets/images/flag-english.png" width={20} />
+          English
+        </Label>
+      ),
+    },
+    {
+      value: 'id',
+      label: (
+        <Label>
+          <img src="assets/images/flag-japan.png" width={20} />
+          Japan
+        </Label>
+      ),
+    },
+  ];
+
   const themeOptions = () => [
     {
       value: 'default',
@@ -90,6 +114,7 @@ const Header = (props) => {
       selected: true,
     },
   ];
+
   return (
     <LayoutHeader fixed>
       <HeaderStyle>
@@ -122,6 +147,19 @@ const Header = (props) => {
                 />
               ),
             },
+            {
+              content: (
+                <SelectStyled
+                  instanceId="react-select-input"
+                  isSearchable={false}
+                  shape="SemiRound"
+                  placeholder="Themes"
+                  value={languageOptions().find((item) => item.value === lang)}
+                  options={languageOptions()}
+                  onChange={({ value }) => setLanguage(value)}
+                />
+              ),
+            },
           ]}
         />
         <Actions
@@ -136,8 +174,8 @@ const Header = (props) => {
                   placement="bottom"
                   currentPath={router.pathname}
                   items={[
-                    { title: 'Profile', link: { href: '/modal-overlays/tooltip' } },
-                    { title: 'Log out', link: { href: '/logout' } },
+                    { title: language().menu.profile, link: { href: '/modal-overlays/tooltip' } },
+                    { title: language().menu.logout, link: { href: '/logout' } },
                   ]}
                   Link={Link}
                 >

@@ -8,6 +8,7 @@ import Select from '@paljs/ui/Select';
 import Auth, { Group } from 'components/Auth';
 import Layout from 'Layouts';
 import getRoute from 'helpers/route';
+import { language } from 'helpers/language';
 
 export default function Index() {
   
@@ -22,26 +23,26 @@ export default function Index() {
 
 
   return (
-    <Layout title="Login">
-      <Auth title="Login" subTitle="Hello! Login with your email">
+    <Layout title={language().menu.login}>
+      <Auth title={language().menu.login}>
         <form>
-          <Select size="Medium" options={companies} placeholder="Company Name" />
+          <Select size="Medium" options={companies} placeholder={language().placeholder.companyName} />
           <InputGroup fullWidth size="Medium">
-            <input type="text" placeholder="User ID" />
+            <input type="text" placeholder={language().placeholder.userId} />
           </InputGroup>
           <InputGroup fullWidth size="Medium">
-            <input type="password" placeholder="Password" />
+            <input type="password" placeholder={language().placeholder.password} />
           </InputGroup>
           <Group>
             <Checkbox checked onChange={onCheckbox}>
-              Remember me
+                {language().sentence.rememberMe}
             </Checkbox>
             <Link href={getRoute("auth.forgot.password")}>
-              <a>Forgot Password?</a>
+              <a>{language().menu.forgotPassword}?</a>
             </Link>
           </Group>
           <Button status="Success" type="button" shape="SemiRound" fullWidth>
-            Login
+          {language().menu.login}
           </Button>
         </form>
       </Auth>
