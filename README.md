@@ -1,13 +1,12 @@
-### nextjs-admin-template
-
-Admin dashboard template based on Next.js with [@paljs/ui](https://github.com/paljs/ui) component package
+### matsumoto-pps-frontend
+Admin dashboard for matsumoto payment processing system
 
 #### Setup:
 
 ```
-git clone https://github.com/paljs/nextjs-admin-template.git
+git clone https://github.com/eftax-sd/matsumoto-pps-frontend
 
-cd nextjs-admin-template
+cd matsumoto-pps-prontend
 
 yarn install
 
