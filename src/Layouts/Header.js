@@ -147,19 +147,6 @@ const Header = (props) => {
                   isSearchable={false}
                   shape="SemiRound"
                   placeholder="Themes"
-                  value={themeOptions().find((item) => item.value === props.theme.value)}
-                  options={themeOptions()}
-                  onChange={({ value }) => props.theme.set(value)}
-                />
-              ),
-            },
-            {
-              content: (
-                <SelectStyled
-                  instanceId="react-select-input"
-                  isSearchable={false}
-                  shape="SemiRound"
-                  placeholder="Themes"
                   value={languageOptions().find((item) => item.value === lang)}
                   options={languageOptions()}
                   onChange={({ value }) => setLanguage(value)}

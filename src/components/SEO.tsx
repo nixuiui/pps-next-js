@@ -32,6 +32,8 @@ const SEO: React.FC<SEOProps> = ({ description, keywords, title }) => (
               `,
       }}
     />
+    <link rel="stylesheet" href="/styles/table.css" />
+    <link rel="stylesheet" href="/styles/custom.css" />
   </Head>
 );
 
