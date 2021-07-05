@@ -59,7 +59,7 @@ const Header = (props) => {
       value: 'en',
       label: (
         <Label>
-          <img src="assets/images/flag-english.png" width={20} />
+          <img src="/assets/images/flag-english.png" width={20} />
           English
         </Label>
       ),
@@ -68,7 +68,7 @@ const Header = (props) => {
       value: 'id',
       label: (
         <Label>
-          <img src="assets/images/flag-japan.png" width={20} />
+          <img src="/assets/images/flag-japan.png" width={20} />
           Japan
         </Label>
       ),
