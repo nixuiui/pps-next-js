@@ -1,9 +1,9 @@
 {
-  "name": "nextjs-admin-template",
+  "name": "matsumoto-pps-frontend",
   "private": true,
   "description": "Admin dashboard template based on nextjs with @paljs/ui component package",
   "version": "0.1.0",
-  "author": "Ahmed Elywa",
+  "author": "Satria Daramawan",
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "27.1.0",
     "@ckeditor/ckeditor5-react": "3.0.2",
@@ -31,10 +31,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/paljs/nextjs-admin-template"
+    "url": "https://github.com/paljs/matsumoto-pps-frontend"
   },
   "bugs": {
-    "url": "https://github.com/paljs/nextjs-admin-template/issues"
+    "url": "https://github.com/paljs/matsumoto-pps-frontend/issues"
   },
   "devDependencies": {
     "@types/node": "15.0.1",
