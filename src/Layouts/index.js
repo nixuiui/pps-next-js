@@ -13,6 +13,7 @@ import { Menu, MenuRefObject } from '@paljs/ui/Menu';
 import Link from 'next/link';
 import menuItems from './menuItem';
 import SEO, { SEOProps } from 'components/SEO';
+import { language } from 'helpers/language';
 
 const getDefaultTheme = () => {
   if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
@@ -86,7 +87,7 @@ const LayoutPage = ({ children, ...rest }) => {
                       className="sidebar-menu"
                       Link={Link}
                       ref={menuRef}
-                      items={menuItems}
+                      items={menuItems(language())}
                       currentPath={router.pathname}
                       toggleSidebar={() => sidebarRef.current?.hide()}
                     />
