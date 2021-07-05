@@ -81,7 +81,6 @@ export default function Index() {
           <Select 
             size="Medium" 
             options={companies}
-            label={(val) => val?.name}
             name="company"
             onChange={(val) => setFormState({...formState, company: val?.value})}
             placeholder={language().placeholder.companyName} />
