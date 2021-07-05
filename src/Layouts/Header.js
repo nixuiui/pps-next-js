@@ -53,7 +53,9 @@ const SelectStyled = styled(Select)`
 const Header = (props) => {
   const router = useRouter();
 
-  var lang = getLanguage()
+  const [lang, setLang] = React.useState(null);
+  React.useEffect(() => getLanguage(), null);
+
   const languageOptions = () => [
     {
       value: 'en',

@@ -8,15 +8,17 @@ export function language() {
 
 export function getLanguage() {
     var defaultLanguage = "en"
-    if(localStorage.getItem(localStorageKey.language)) {
+    if(typeof localStorage !== 'undefined' && localStorage.getItem(localStorageKey.language)) {
         defaultLanguage = localStorage.getItem(localStorageKey.language)
     }
     return defaultLanguage
 }
 
 export function setLanguage(language) {
-    localStorage.setItem(localStorageKey.language, language)
-    window.location.reload()
+    if(typeof localStorage !== 'undefined'){
+        localStorage.setItem(localStorageKey.language, language)
+        window.location.reload()
+    }
 }
 
 const en = {

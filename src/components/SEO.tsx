@@ -44,7 +44,7 @@ export interface SEOProps {
 }
 
 SEO.defaultProps = {
-  description: 'Free admin dashboard template based on Next.Js with @paljs/ui component package',
+  description: 'Matsumoto Processing Payment System',
   keywords: [
     'admin-dashboard',
     'admin',
