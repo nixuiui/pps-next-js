@@ -11,6 +11,7 @@ import ContextMenu from '@paljs/ui/ContextMenu';
 import User from '@paljs/ui/User';
 import { breakpointDown } from '@paljs/ui/breakpoints';
 import { language, getLanguage, setLanguage } from 'helpers/language';
+import getRoute from 'helpers/route';
 
 const HeaderStyle = styled.div`
   display: flex;
@@ -67,7 +68,7 @@ const Header = (props) => {
       ),
     },
     {
-      value: 'id',
+      value: 'jp',
       label: (
         <Label>
           <img src="/assets/images/flag-japan.png" width={20} />
@@ -177,7 +178,7 @@ const Header = (props) => {
                   currentPath={router.pathname}
                   items={[
                     { title: language().menu.profile, link: { href: '/modal-overlays/tooltip' } },
-                    { title: language().menu.logout, link: { href: '/logout' } },
+                    { title: language().menu.logout, link: { href: getRoute('auth.logout') } },
                   ]}
                   Link={Link}
                 >

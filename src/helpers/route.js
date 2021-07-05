@@ -13,6 +13,7 @@ export const routerList = [
 
     // ---------------------<AUTH>---------------------
     { name: "auth.login",               path: "/auth/login" },
+    { name: "auth.logout",              path: "/auth/logout" },
     { name: "auth.forgot.password",     path: "/auth/request-password" },
     { name: "auth.reset.password",      path: "/auth/reset-password" },
     // ---------------------<AUTH>---------------------
