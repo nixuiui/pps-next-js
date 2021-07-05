@@ -12,6 +12,7 @@ import User from '@paljs/ui/User';
 import { breakpointDown } from '@paljs/ui/breakpoints';
 import { language, getLanguage, setLanguage } from 'helpers/language';
 import getRoute from 'helpers/route';
+import { getAccountSwr } from '../services/swr/account.swr'
 
 const HeaderStyle = styled.div`
   display: flex;
@@ -118,6 +119,8 @@ const Header = (props) => {
     },
   ];
 
+  const account = getAccountSwr()
+
   return (
     <LayoutHeader fixed>
       <HeaderStyle>
@@ -182,7 +185,7 @@ const Header = (props) => {
                   ]}
                   Link={Link}
                 >
-                  <User image="url('/icons/icon-72x72.png')" name="Ahmed Elywa" title="Manger" size="Medium" />
+                  <User image="url('/icons/icon-72x72.png')" name={account?.data?.name} title={account?.data?.role} size="Medium" />
                 </ContextMenu>
               ),
             },
