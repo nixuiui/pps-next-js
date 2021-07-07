@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-const Page = dynamic(() => import('../../components/pages/home/home-page'), {
+const Page = dynamic(() => import('../../components/pages/master-data/general/general-page'), {
     loading: () => null,
     ssr: false,
 });
