@@ -146,7 +146,7 @@ const Header = (props) => {
                   instanceId="react-select-input"
                   isSearchable={false}
                   shape="SemiRound"
-                  placeholder="Themes"
+                  placeholder="Language"
                   value={languageOptions().find((item) => item.value === lang)}
                   options={languageOptions()}
                   onChange={({ value }) => setLanguage(value)}
