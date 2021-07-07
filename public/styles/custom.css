@@ -399,6 +399,9 @@
     padding-right: 0.5em;
 }
 
+.text-center {
+    text-align: center !important;
+}
 .text-right {
     text-align: right !important;
 }
