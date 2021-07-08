@@ -3,7 +3,7 @@ import Select from '@paljs/ui/Select';
 import { InputGroup, Radio } from '@paljs/ui';
 import { useState } from 'react';
 
-export default function CompanyForm(props) {
+export default function CompanyPaymentForm(props) {
 
     const [isLoading, setLoading] = useState(false)
     const [formState, setFormState] = useState(null)
