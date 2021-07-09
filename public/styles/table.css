@@ -17,6 +17,7 @@
   .table thead th {
     vertical-align: bottom;
     border-bottom: 2px solid #eceeef;
+    white-space: nowrap;
   }
   
   .table tbody + tbody {
