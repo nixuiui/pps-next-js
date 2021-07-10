@@ -24,6 +24,7 @@ export default function SearchBar(props) {
                     typingSearchTimer = setTimeout(onSearch, 500)
                 }}
                 onKeyDown={(e) => clearTimeout(typingSearchTimer)}
+                disabled={props?.isLoading}
                 readOnly={props?.isLoading}/>
         </InputGroup>
         <EvaIcon 

@@ -16,12 +16,13 @@ import SEO, { SEOProps } from 'components/SEO';
 import { language } from 'helpers/language';
 
 const getDefaultTheme = () => {
-  if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-    return localStorage.getItem('theme');
-  } else {
-    const hours = new Date().getHours();
-    return hours > 6 && hours < 19 ? 'default' : 'dark';
-  }
+  return 'default';
+  // if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+  //   return localStorage.getItem('theme');
+  // } else {
+  //   const hours = new Date().getHours();
+  //   return hours > 6 && hours < 19 ? 'default' : 'dark';
+  // }
 };
 
 const LayoutPage = ({ children, ...rest }) => {

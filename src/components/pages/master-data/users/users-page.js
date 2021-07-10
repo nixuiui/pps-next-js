@@ -5,7 +5,9 @@ import SearchBar from '../../../widget/searchbar';
 import UsersForm from './users-form';
 import { getLanguage } from 'helpers/language';
 import { Button } from '@paljs/ui';
-import { ErrorModal } from '../../../widget/modal';
+import { ConfirmationModal } from '../../../widget/modal';
+import ReactHotkeys from 'react-hot-keys';
+import { deleteUserApi } from '../../../../services/api/user.api';
 
 export default function UsersPage() {
 
@@ -55,29 +57,27 @@ export default function UsersPage() {
     }
     
     function closeForm() {
+        setIndexSelected(-1)
         setOpenForm(false)
         setEdit(false)
     }
     // --------------<FROM>--------------
     
     // --------------<ACTION>--------------
-    useEffect(() => {
-        document.addEventListener("keydown", handleKeyDown);
-    })
-
-    function handleKeyDown(e) {
-        if(e.keyCode == 121) // F10
-            setOpenForm(true)
-        else if(e.keyCode == 123) // F12
-            closeForm()
-        else if(e.shiftKey && e.keyCode == 113) { // SF3
-            openEditForm()
-        }
+    function handleKeyDown(keyName, e, handle) {
+        console.log(e.key)
+        if(e.key == 'F10') setOpenForm(true)
+        else if(e.key == 'F12') closeForm()
+        else if(e.shiftKey && e.key == 'F2') openEditForm()
+        else if(e.key == 'Backspace') confirmationDelete()
     }
 
     const [indexSelected, setIndexSelected] = useState(-1)
     function selectItem(i) {
-        setIndexSelected(i)
+        if(i != indexSelected)
+            setIndexSelected(i)
+        else 
+            setIndexSelected(-1)
     }
 
     function selectedItem() {
@@ -86,61 +86,88 @@ export default function UsersPage() {
     }
 
     function openEditForm() {
-        console.log("EDIT")
         if(selectedItem() != null) {
             setEdit(true)
             setOpenForm(true)
         }
     }
+    
+    const [isOpenDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
+    function confirmationDelete() {
+        if(selectedItem() != null) {
+            setOpenDeleteConfirmation(true)
+        }
+    }
+    function deleteItem() {
+        if(indexSelected > -1) {
+            deleteUserApi(selectedItem()?._id)
+            setOpenDeleteConfirmation(false)
+            setIndexSelected(-1)
+            dataList.splice(indexSelected, 1)
+            setDataList([...dataList])
+        }
+    }
     // --------------<ACTION>--------------
     
-    return <Layout title="Users">
-        <UsersForm 
-            isOpen={isOpenForm}
-            isEdit={isEdit}
-            dataUpdated={(res) => onCompletedForm()}
-            dataInserted={(res) => onCompletedForm()}
-            data={selectedItem()} />
-        <div className="card mb-5">
-            <div className="display-space-between mb-5">
-                <h5 className="m-0">List of Users</h5>
-                <SearchBar />
-            </div>
-            <div className=" table-responsive">
-                <table className="table table-hover table-bordered">
-                    <thead>
-                        <tr>
-                            <th>User ID</th>
-                            <th>User Name</th>
-                            <th>Email</th>
-                            <th>Company</th>
-                            <th>Division</th>
-                            <th>Department</th>
-                            <th>Search Key</th>
-                            <th>Role</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {dataList?.map((item,i) => {
-                            return <tr 
-                                key={i} 
-                                className={"cursor-pointer " + (indexSelected == i ? "selected" : "")} 
-                                onClick={() => selectItem(i)}>
-                                <td>{item?.userId}</td>
-                                <td>{lang == 'en' ? item?.name : item?.nameJa}</td>
-                                <td>{item?.email}</td>
-                                <td>{lang == 'en' ? item?.company?.name : item?.company?.nameJa}</td>
-                                <td>{item?.division}</td>
-                                <td>{item?.department}</td>
-                                <td>{item?.searchKey}</td>
-                                <td>{item?.role}</td>
-                                <td>{item?.remarks}</td>
+    return <ReactHotkeys
+        keyName="F10,F12,shift+F2,backspace" 
+        onKeyDown={handleKeyDown}>
+        <Layout title="Users">
+            <UsersForm 
+                isOpen={isOpenForm}
+                isEdit={isEdit}
+                dataUpdated={(res) => onCompletedForm()}
+                dataInserted={(res) => onCompletedForm()}
+                data={selectedItem()} />
+            <ConfirmationModal 
+                isOpen={isOpenDeleteConfirmation}
+                title="Delete Item"
+                description="Do you want to delete this item?"
+                cancel={() => setOpenDeleteConfirmation(false)}
+                confirm={() => deleteItem()} />
+            <div className="card mb-5">
+                <div className="display-space-between mb-5">
+                    <h5 className="m-0">List of Users</h5>
+                    <SearchBar isLoading={listUserSwr?.isLoading} onSearch={(keyword) => searchData(keyword)} />
+                </div>
+                <div className=" table-responsive">
+                    <table className="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>User Name</th>
+                                <th>Email</th>
+                                <th>Company</th>
+                                <th>Division</th>
+                                <th>Department</th>
+                                <th>Search Key</th>
+                                <th>Role</th>
+                                <th>Remarks</th>
                             </tr>
-                        })}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {(listUserSwr?.isLoading && dataList.length <= 0) && <tr><td colspan="9"><div className="text-center">Loading...</div></td></tr>}
+                            {(!listUserSwr?.isLoading && dataList.length <= 0) && <tr><td colspan="9"><div className="text-center">No Data</div></td></tr>}
+                            {dataList.length > 0 && dataList?.map((item,i) => {
+                                return <tr 
+                                    key={i} 
+                                    className={"cursor-pointer " + (indexSelected == i ? "selected" : "")} 
+                                    onClick={() => selectItem(i)}>
+                                    <td>{item?.userId}</td>
+                                    <td>{lang == 'en' ? item?.name : item?.nameJa}</td>
+                                    <td>{item?.email}</td>
+                                    <td>{lang == 'en' ? item?.company?.name : item?.company?.nameJa}</td>
+                                    <td>{item?.division}</td>
+                                    <td>{item?.department}</td>
+                                    <td>{item?.searchKey}</td>
+                                    <td>{item?.role}</td>
+                                    <td>{item?.remarks}</td>
+                                </tr>
+                            })}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-    </Layout>
+        </Layout>
+    </ReactHotkeys>
 }

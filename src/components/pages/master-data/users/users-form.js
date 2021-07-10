@@ -1,4 +1,4 @@
-import { Row, Col, Button } from '@paljs/ui';
+import { Row, Col, Button, Spinner } from '@paljs/ui';
 import Alert from '@paljs/ui/Alert';
 import Select from '@paljs/ui/Select';
 import { InputGroup, Radio } from '@paljs/ui';
@@ -7,33 +7,22 @@ import { insertUserApi, updateUserApi } from '../../../../services/api/user.api'
 import { convertListToOptions } from '../../../../helpers/general';
 import { getCompaniesApi } from '../../../../services/api/master-data.api'
 import { getLanguage } from '../../../../helpers/language'
+import ReactHotkeys from 'react-hot-keys';
 
 export default function UsersForm(props) {
 
     const lang = getLanguage()
 
     // --------------<ACTION>--------------
-    const [counter, setCounter] = useState(0)
-    useEffect(() => {
-        // document.addEventListener("keydown", handleKeyDown);
-        document.addEventListener("keyup", handleKeyDown);
-    })
-
-    function handleKeyDown(e) {
-        setTimeout(() => {
-            e.preventDefault();
-            setCounter(counter+1);
-            if(counter > 0) return
-            console.log(e.keyCode)
-            console.log(counter)
-            if(e.keyCode == 112) sendData() // F1 
-        }, 500)
+    function handleKeyDown(keyName, e, handle) {
+        if(e.key == 'F1') sendData()
     }
     // --------------<ACTION>--------------
 
     const roles = [
+        {label: "Administrator", value: "administrator"},
         {label: "Accounting", value: "accounting_dept"},
-        {label: "Employees", value: "employees"},
+        {label: "Sales", value: "sales_dept"},
     ]
 
     const [companies, setCompanies] = useState([])
@@ -46,7 +35,7 @@ export default function UsersForm(props) {
 
     const [isLoading, setLoading] = useState(false)
     const [errorText, setErrorText] = useState(null)
-    const [formState, setFormState] = useState(null)
+    const [formState, setFormState] = useState({})
     function onChangeInput(e) {
         setFormState({...formState, [e.target.name]: e.target.value})
     }
@@ -66,14 +55,13 @@ export default function UsersForm(props) {
                 searchKey: props?.data?.searchKey,
                 division: props?.data?.division,
                 remarks: props?.data?.remarks,
-                password: props?.data?.password,
                 company: companies?.find((val) => val?.value?._id == props?.data?.company?._id),
                 role: roles?.find((val) => val?.value == props?.data?.role)
             })
         }
     }, [props?.isOpen])
 
-    function sendData() {
+    const sendData = async () => {
         var formData = {
             userId: formState?.userId,
             name: formState?.name,
@@ -88,213 +76,212 @@ export default function UsersForm(props) {
             role: formState?.role?.value,
         }
         try {
+            setLoading(true)
             if(props?.isEdit) {
-                updateUserApi(formData, props?.data?._id).then((res) => {
-                    setFormState(null)
-                    props?.dataUpdated(res)
-                }).catch((err) => {
-                    console.log(err)
-                    setErrorText({...errorText, error: err})
-                })
+                var res = await updateUserApi(formData, props?.data?._id)
+                props?.dataUpdated(res)
             } else {
-                insertUserApi(formData).then((res) => {
-                    setFormState(null)
-                    props?.dataInserted(res)
-                }).catch((err) => {
-                    console.log(err)
-                    setErrorText({...errorText, error: err})
-                })
+                var res = await insertUserApi(formData)
+                props?.dataInserted(res)
             }
         } catch(err) {
             console.log(err)
+            setErrorText({...errorText, error: err})
         }
+        setFormState({})
+        setErrorText(null)
         setLoading(false)
     }
 
-    return <div className="card mb-5" style={{ display: props?.isOpen ? "block" : "none" }}>
-        <div className="mb-5">
-            <h5 className="m-0">User Form</h5>
+    return <ReactHotkeys
+        keyName="F1" 
+        onKeyDown={handleKeyDown}>
+        {isLoading && <Spinner>Loading...</Spinner>}
+        <div className="card mb-5" style={{ display: props?.isOpen ? "block" : "none" }}>
+            <div className="mb-5">
+                <h5 className="m-0">User Form</h5>
+            </div>
+            <Row className="mb-3">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                    User ID
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <InputGroup fullWidth size="Small">
+                        <input 
+                            type="text" 
+                            name="userId"
+                            value={formState?.userId}
+                            onChange={(e) => onChangeInput(e)}
+                            placeholder="" />
+                    </InputGroup>
+                </Col>
+            </Row>
+            <Row className="mb-3">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                    User Name
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <InputGroup fullWidth size="Small">
+                        <input 
+                            type="text" 
+                            name="name"
+                            value={formState?.name}
+                            onChange={(e) => onChangeInput(e)}
+                            placeholder="" />
+                    </InputGroup>
+                </Col>
+            </Row>
+            <Row className="mb-3">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                    Name in Kana
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <InputGroup fullWidth size="Small">
+                        <input 
+                            type="text" 
+                            name="nameInKana"
+                            value={formState?.nameInKana}
+                            onChange={(e) => onChangeInput(e)}
+                            placeholder="" />
+                    </InputGroup>
+                </Col>
+            </Row>
+            <Row className="mb-3">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                    Email Address
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <InputGroup fullWidth size="Small">
+                        <input 
+                            type="text" 
+                            name="email"
+                            value={formState?.email}
+                            onChange={(e) => onChangeInput(e)}
+                            placeholder="" />
+                    </InputGroup>
+                </Col>
+            </Row>
+            <Row className="mb-3">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                    Department
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <InputGroup fullWidth size="Small">
+                        <input 
+                            type="text" 
+                            name="department"
+                            value={formState?.department}
+                            onChange={(e) => onChangeInput(e)}
+                            placeholder="" />
+                    </InputGroup>
+                </Col>
+            </Row>
+            <Row className="mb-3">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                    Division
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <InputGroup fullWidth size="Small">
+                        <input 
+                            type="text" 
+                            name="division"
+                            value={formState?.division}
+                            onChange={(e) => onChangeInput(e)}
+                            placeholder="" />
+                    </InputGroup>
+                </Col>
+            </Row>
+            <Row className="mb-3">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                    Company
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <Select 
+                        size="Small" 
+                        options={companies}
+                        name="company"
+                        value={formState?.company}
+                        onChange={(val) => setFormState({...formState, company: val})} />
+                </Col>
+            </Row>
+            <Row className="mb-3">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                    Search Key
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <InputGroup fullWidth size="Small">
+                        <input 
+                            type="text" 
+                            name="searchKey"
+                            value={formState?.searchKey}
+                            onChange={(e) => onChangeInput(e)}
+                            placeholder="" />
+                    </InputGroup>
+                </Col>
+            </Row>
+            <Row className="mb-3">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                    Role
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <Select 
+                        size="Small" 
+                        options={roles}
+                        name="role"
+                        value={formState?.role}
+                        onChange={(val) => setFormState({...formState, role: val})} />
+                </Col>
+            </Row>
+            <Row className="mb-3">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                    Password
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <InputGroup fullWidth size="Small">
+                        <input 
+                            type="password" 
+                            name="password"
+                            value={formState?.password}
+                            onChange={(e) => onChangeInput(e)}
+                            placeholder="" />
+                    </InputGroup>
+                </Col>
+            </Row>
+            <Row className="mb-3">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                    Remarks
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <InputGroup fullWidth size="Small">
+                        <input 
+                            type="text" 
+                            name="remarks"
+                            value={formState?.remarks}
+                            onChange={(e) => onChangeInput(e)}
+                            placeholder="" />
+                    </InputGroup>
+                </Col>
+            </Row>
+            {errorText?.error && <Row className="mb-3 mt-5">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <Alert status="Danger">{errorText?.error}</Alert>
+                </Col>
+            </Row>}
+            <Row className="mb-3 mt-5">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <Button 
+                        status="Primary" 
+                        size="Small"
+                        disabled={isLoading}
+                        onClick={sendData}>
+                        Save
+                    </Button>
+                </Col>
+            </Row>
         </div>
-        <Row className="mb-3">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                User ID
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <InputGroup fullWidth size="Small">
-                    <input 
-                        type="text" 
-                        name="userId"
-                        value={formState?.userId}
-                        onChange={(e) => onChangeInput(e)}
-                        placeholder="" />
-                </InputGroup>
-            </Col>
-        </Row>
-        <Row className="mb-3">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                User Name
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <InputGroup fullWidth size="Small">
-                    <input 
-                        type="text" 
-                        name="name"
-                        value={formState?.name}
-                        onChange={(e) => onChangeInput(e)}
-                        placeholder="" />
-                </InputGroup>
-            </Col>
-        </Row>
-        <Row className="mb-3">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                Name in Kana
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <InputGroup fullWidth size="Small">
-                    <input 
-                        type="text" 
-                        name="nameInKana"
-                        value={formState?.nameInKana}
-                        onChange={(e) => onChangeInput(e)}
-                        placeholder="" />
-                </InputGroup>
-            </Col>
-        </Row>
-        <Row className="mb-3">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                Email Address
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <InputGroup fullWidth size="Small">
-                    <input 
-                        type="text" 
-                        name="email"
-                        value={formState?.email}
-                        onChange={(e) => onChangeInput(e)}
-                        placeholder="" />
-                </InputGroup>
-            </Col>
-        </Row>
-        <Row className="mb-3">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                Department
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <InputGroup fullWidth size="Small">
-                    <input 
-                        type="text" 
-                        name="department"
-                        value={formState?.department}
-                        onChange={(e) => onChangeInput(e)}
-                        placeholder="" />
-                </InputGroup>
-            </Col>
-        </Row>
-        <Row className="mb-3">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                Division
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <InputGroup fullWidth size="Small">
-                    <input 
-                        type="text" 
-                        name="division"
-                        value={formState?.division}
-                        onChange={(e) => onChangeInput(e)}
-                        placeholder="" />
-                </InputGroup>
-            </Col>
-        </Row>
-        <Row className="mb-3">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                Company
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <Select 
-                    size="Small" 
-                    options={companies}
-                    name="company"
-                    value={formState?.company}
-                    onChange={(val) => setFormState({...formState, company: val})} />
-            </Col>
-        </Row>
-        <Row className="mb-3">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                Search Key
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <InputGroup fullWidth size="Small">
-                    <input 
-                        type="text" 
-                        name="searchKey"
-                        value={formState?.searchKey}
-                        onChange={(e) => onChangeInput(e)}
-                        placeholder="" />
-                </InputGroup>
-            </Col>
-        </Row>
-        <Row className="mb-3">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                Role
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <Select 
-                    size="Small" 
-                    options={roles}
-                    name="role"
-                    value={formState?.role}
-                    onChange={(val) => setFormState({...formState, role: val})} />
-            </Col>
-        </Row>
-        <Row className="mb-3">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                Password
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <InputGroup fullWidth size="Small">
-                    <input 
-                        type="password" 
-                        name="password"
-                        value={formState?.password}
-                        onChange={(e) => onChangeInput(e)}
-                        placeholder="" />
-                </InputGroup>
-            </Col>
-        </Row>
-        <Row className="mb-3">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                Remarks
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <InputGroup fullWidth size="Small">
-                    <input 
-                        type="text" 
-                        name="remarks"
-                        value={formState?.remarks}
-                        onChange={(e) => onChangeInput(e)}
-                        placeholder="" />
-                </InputGroup>
-            </Col>
-        </Row>
-        {errorText?.error && <Row className="mb-3 mt-5">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <Alert status="Danger">{errorText?.error}</Alert>
-            </Col>
-        </Row>}
-        <Row className="mb-3 mt-5">
-            <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-            </Col>
-            <Col breakPoint={{ xs: 12, md: 4 }}>
-                <Button 
-                    status="Primary" 
-                    size="Small"
-                    disabled={isLoading}
-                    onClick={sendData}>
-                    Save
-                </Button>
-            </Col>
-        </Row>
-    </div>
+    </ReactHotkeys>
 }
