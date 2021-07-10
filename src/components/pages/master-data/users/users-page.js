@@ -174,13 +174,13 @@ export default function UsersPage() {
                             })}
                         </tbody>
                     </table>
-                    <div className="pagination mt-5">
-                        <ReactPaginate 
-                            initialPage={page}
-                            disableInitialCallback={true}
-                            onPageChange={(val) => changePage(val?.selected)}
-                            pageCount={total / limit}/>
-                    </div>
+                </div>
+                <div className="pagination mt-3">
+                    <ReactPaginate 
+                        initialPage={page}
+                        disableInitialCallback={true}
+                        onPageChange={(val) => changePage(val?.selected)}
+                        pageCount={total / limit}/>
                 </div>
             </div>
         </Layout>
