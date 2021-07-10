@@ -412,3 +412,31 @@
 .cursor-pointer {
   cursor: pointer;
 }
+
+.pagination ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.pagination ul li {
+  display: inline-block;
+  margin-right: 4px;
+}
+.pagination ul li a {
+  cursor: pointer;
+  padding: 8px 16px;
+  margin: 0;
+  border-radius: 8px;
+  display: block;
+  font-weight: 600;
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+.pagination ul li a:hover {
+  border: 1px solid #f1f1f1;
+}
+.pagination ul li.selected a {
+  color: #444;
+  cursor: default;
+  border: 1px solid #f1f1f1;
+}

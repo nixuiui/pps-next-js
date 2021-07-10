@@ -8,6 +8,7 @@ import { Button } from '@paljs/ui';
 import { ConfirmationModal } from '../../../widget/modal';
 import ReactHotkeys from 'react-hot-keys';
 import { deleteUserApi } from '../../../../services/api/user.api';
+import ReactPaginate from 'react-paginate';
 
 export default function UsersPage() {
 
@@ -19,12 +20,17 @@ export default function UsersPage() {
     // ------------------------------------------
     const [total, setTotal] = useState(0)
     const [page, setPage] = useState(0)
-    const [limit, setLimit] = useState(20)
+    const [limit, setLimit] = useState(10)
     
     const [search, setSearch] = useState("")
     function searchData(search) {
         setPage(0)
         setSearch(search)
+    }
+    
+    function changePage(number) {
+        console.log(number)
+        setPage(number)
     }
     
     const [isLoading, setLoading] = useState(false)
@@ -134,6 +140,7 @@ export default function UsersPage() {
                     <table className="table table-hover table-bordered">
                         <thead>
                             <tr>
+                                <th>No</th>
                                 <th>User ID</th>
                                 <th>User Name</th>
                                 <th>Email</th>
@@ -153,19 +160,27 @@ export default function UsersPage() {
                                     key={i} 
                                     className={"cursor-pointer " + (indexSelected == i ? "selected" : "")} 
                                     onClick={() => selectItem(i)}>
-                                    <td>{item?.userId}</td>
-                                    <td>{lang == 'en' ? item?.name : item?.nameJa}</td>
-                                    <td>{item?.email}</td>
-                                    <td>{lang == 'en' ? item?.company?.name : item?.company?.nameJa}</td>
-                                    <td>{item?.division}</td>
-                                    <td>{item?.department}</td>
-                                    <td>{item?.searchKey}</td>
-                                    <td>{item?.role}</td>
-                                    <td>{item?.remarks}</td>
+                                        <td>{(page*limit) + i + 1}</td>
+                                        <td>{item?.userId}</td>
+                                        <td>{lang == 'en' ? item?.name : item?.nameJa}</td>
+                                        <td>{item?.email}</td>
+                                        <td>{lang == 'en' ? item?.company?.name : item?.company?.nameJa}</td>
+                                        <td>{item?.division}</td>
+                                        <td>{item?.department}</td>
+                                        <td>{item?.searchKey}</td>
+                                        <td>{item?.role}</td>
+                                        <td>{item?.remarks}</td>
                                 </tr>
                             })}
                         </tbody>
                     </table>
+                    <div className="pagination mt-5">
+                        <ReactPaginate 
+                            initialPage={page}
+                            disableInitialCallback={true}
+                            onPageChange={(val) => changePage(val?.selected)}
+                            pageCount={total / limit}/>
+                    </div>
                 </div>
             </div>
         </Layout>
