@@ -1,16 +1,16 @@
 import useSWR, { mutate } from "swr";
-import { getDetailUserApi, getListUsersApi } from "../api/user.api";
+import { getDetailCompanyApi, getListCompaniesApi } from "../api/company.api";
 import { swrOptions } from "./config.swr";
 
-export function getListUsersSwr(param) {
+export function getListCompaniesSwr(param) {
   var page = param?.page ?? 1
   var limit = param?.limit ?? 20
   var search = param?.search ?? ""
   var sortBy = param?.sortBy ?? ""
   var orderBy = param?.orderBy ?? ""
   const { data, mutate, error } = useSWR(
-    `/user/users?search=${search}&page=${page}&limit=${limit}&sortBy=${sortBy ?? ""}&orderBy=${orderBy ?? ""}`,
-    async () => getListUsersApi(param), 
+    `/user/companies?search=${search}&page=${page}&limit=${limit}&sortBy=${sortBy ?? ""}&orderBy=${orderBy ?? ""}`,
+    async () => getListCompaniesApi(param), 
     swrOptions
   )
   const isLoading = !data && !error
@@ -23,9 +23,9 @@ export function getListUsersSwr(param) {
   };
 }
 
-export function getDetailUserSwr(id) {
-  const fetcher = async () => getDetailUserApi(id)
-  const { data, mutate, error } = useSWR(`/user/users/${id}`, fetcher, swrOptions)
+export function getDetailCompanySwr(id) {
+  const fetcher = async () => getDetailCompanyApi(id)
+  const { data, mutate, error } = useSWR(`/user/companies/${id}`, fetcher, swrOptions)
   const isLoading = !data && !error
   
   return {

@@ -13,7 +13,6 @@ import ReactPaginate from 'react-paginate';
 export default function UsersPage() {
 
     const lang = getLanguage()
-    const [isOpenModal, setOpenModal] = useState(false)
 
     // ==========================================
     // [START] GET DATA & PAGINATION
