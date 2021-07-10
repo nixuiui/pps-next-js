@@ -12,6 +12,25 @@ export default function UsersForm(props) {
 
     const lang = getLanguage()
 
+    // --------------<ACTION>--------------
+    const [counter, setCounter] = useState(0)
+    useEffect(() => {
+        // document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("keyup", handleKeyDown);
+    })
+
+    function handleKeyDown(e) {
+        setTimeout(() => {
+            e.preventDefault();
+            setCounter(counter+1);
+            if(counter > 0) return
+            console.log(e.keyCode)
+            console.log(counter)
+            if(e.keyCode == 112) sendData() // F1 
+        }, 500)
+    }
+    // --------------<ACTION>--------------
+
     const roles = [
         {label: "Accounting", value: "accounting_dept"},
         {label: "Employees", value: "employees"},
@@ -32,6 +51,28 @@ export default function UsersForm(props) {
         setFormState({...formState, [e.target.name]: e.target.value})
     }
 
+    useEffect(() => {
+        if(props?.isEdit) {
+            console.log("EDIT")
+            console.log(props?.data)
+            console.log(props?.isEdit)
+            setFormState({
+                ...formState,
+                userId: props?.data?.userId,
+                name: props?.data?.name,
+                email: props?.data?.email,
+                nameInKana: props?.data?.nameInKana,
+                department: props?.data?.department,
+                searchKey: props?.data?.searchKey,
+                division: props?.data?.division,
+                remarks: props?.data?.remarks,
+                password: props?.data?.password,
+                company: companies?.find((val) => val?.value?._id == props?.data?.company?._id),
+                role: roles?.find((val) => val?.value == props?.data?.role)
+            })
+        }
+    }, [props?.isOpen])
+
     function sendData() {
         var formData = {
             userId: formState?.userId,
@@ -43,12 +84,12 @@ export default function UsersForm(props) {
             division: formState?.division,
             remarks: formState?.remarks,
             password: formState?.password,
-            company: formState?.company?._id,
-            role: formState?.role,
+            company: formState?.company?.value?._id,
+            role: formState?.role?.value,
         }
         try {
             if(props?.isEdit) {
-                updateUserApi(formData, props?.data?.id).then((res) => {
+                updateUserApi(formData, props?.data?._id).then((res) => {
                     setFormState(null)
                     props?.dataUpdated(res)
                 }).catch((err) => {
@@ -83,6 +124,7 @@ export default function UsersForm(props) {
                     <input 
                         type="text" 
                         name="userId"
+                        value={formState?.userId}
                         onChange={(e) => onChangeInput(e)}
                         placeholder="" />
                 </InputGroup>
@@ -97,6 +139,7 @@ export default function UsersForm(props) {
                     <input 
                         type="text" 
                         name="name"
+                        value={formState?.name}
                         onChange={(e) => onChangeInput(e)}
                         placeholder="" />
                 </InputGroup>
@@ -111,6 +154,7 @@ export default function UsersForm(props) {
                     <input 
                         type="text" 
                         name="nameInKana"
+                        value={formState?.nameInKana}
                         onChange={(e) => onChangeInput(e)}
                         placeholder="" />
                 </InputGroup>
@@ -125,6 +169,7 @@ export default function UsersForm(props) {
                     <input 
                         type="text" 
                         name="email"
+                        value={formState?.email}
                         onChange={(e) => onChangeInput(e)}
                         placeholder="" />
                 </InputGroup>
@@ -139,6 +184,7 @@ export default function UsersForm(props) {
                     <input 
                         type="text" 
                         name="department"
+                        value={formState?.department}
                         onChange={(e) => onChangeInput(e)}
                         placeholder="" />
                 </InputGroup>
@@ -153,6 +199,7 @@ export default function UsersForm(props) {
                     <input 
                         type="text" 
                         name="division"
+                        value={formState?.division}
                         onChange={(e) => onChangeInput(e)}
                         placeholder="" />
                 </InputGroup>
@@ -167,7 +214,8 @@ export default function UsersForm(props) {
                     size="Small" 
                     options={companies}
                     name="company"
-                    onChange={(val) => setFormState({...formState, company: val?.value})} />
+                    value={formState?.company}
+                    onChange={(val) => setFormState({...formState, company: val})} />
             </Col>
         </Row>
         <Row className="mb-3">
@@ -179,6 +227,7 @@ export default function UsersForm(props) {
                     <input 
                         type="text" 
                         name="searchKey"
+                        value={formState?.searchKey}
                         onChange={(e) => onChangeInput(e)}
                         placeholder="" />
                 </InputGroup>
@@ -193,7 +242,8 @@ export default function UsersForm(props) {
                     size="Small" 
                     options={roles}
                     name="role"
-                    onChange={(val) => setFormState({...formState, role: val?.value})} />
+                    value={formState?.role}
+                    onChange={(val) => setFormState({...formState, role: val})} />
             </Col>
         </Row>
         <Row className="mb-3">
@@ -205,6 +255,7 @@ export default function UsersForm(props) {
                     <input 
                         type="password" 
                         name="password"
+                        value={formState?.password}
                         onChange={(e) => onChangeInput(e)}
                         placeholder="" />
                 </InputGroup>
@@ -219,6 +270,7 @@ export default function UsersForm(props) {
                     <input 
                         type="text" 
                         name="remarks"
+                        value={formState?.remarks}
                         onChange={(e) => onChangeInput(e)}
                         placeholder="" />
                 </InputGroup>

@@ -6,7 +6,6 @@ export default function SearchBar(props) {
 
     const [searchInput, setSearchInput] = useState("")
     var typingSearchTimer;
-    var doneTypingSearchInterval = 500; 
     function onSearch() {
         if(!props?.isLoading) {
             props.onSearch(searchInput)
@@ -22,7 +21,7 @@ export default function SearchBar(props) {
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyUp={(e) => {
                     clearTimeout(typingSearchTimer)
-                    typingSearchTimer = setTimeout(onSearch, doneTypingSearchInterval)
+                    typingSearchTimer = setTimeout(onSearch, 500)
                 }}
                 onKeyDown={(e) => clearTimeout(typingSearchTimer)}
                 readOnly={props?.isLoading}/>
