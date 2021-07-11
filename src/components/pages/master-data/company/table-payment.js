@@ -3,8 +3,11 @@ import { getLanguage } from '../../../../helpers/language';
 import SearchBar from "../../../widget/searchbar";
 import ReactPaginate from 'react-paginate';
 import { getListCompanyPaymentsSwr } from '../../../../services/swr/company-payment.swr';
+import ReactHotkeys from 'react-hot-keys';
+import { ConfirmationModal } from '../../../widget/modal';
+import { deleteCompanyPaymentsApi } from '../../../../services/api/company-payment.api';
 
-export default function TablePayment() {
+export default function TablePayment(props) {
 
     const lang = getLanguage()
 
@@ -66,11 +69,13 @@ export default function TablePayment() {
     
     // --------------<ACTION>--------------
     function handleKeyDown(keyName, e, handle) {
-        console.log(e.key)
-        if(e.key == 'F10') setOpenForm(true)
-        else if(e.key == 'F12') closeForm()
-        else if(e.shiftKey && e.key == 'F2') openEditForm()
-        else if(e.key == 'Backspace') confirmationDelete()
+        if(props?.isOpen) {
+            console.log("Payment")
+            if(e.key == 'F10') setOpenForm(true)
+            else if(e.key == 'F12') closeForm()
+            else if(e.shiftKey && e.key == 'F2') openEditForm()
+            else if(e.key == 'Backspace') confirmationDelete()
+        }
     }
 
     const [indexSelected, setIndexSelected] = useState(-1)
@@ -101,7 +106,7 @@ export default function TablePayment() {
     }
     function deleteItem() {
         if(indexSelected > -1) {
-            deleteUserApi(selectedItem()?._id)
+            deleteCompanyPaymentsApi(selectedItem()?._id)
             setOpenDeleteConfirmation(false)
             setIndexSelected(-1)
             dataList.splice(indexSelected, 1)
@@ -110,7 +115,15 @@ export default function TablePayment() {
     }
     // --------------<ACTION>--------------
 
-    return <div>
+    return <ReactHotkeys
+        keyName="F10,F12,shift+F2,backspace" 
+        onKeyDown={handleKeyDown}>
+        <ConfirmationModal 
+            isOpen={isOpenDeleteConfirmation}
+            title="Delete Item"
+            description="Do you want to delete this item?"
+            cancel={() => setOpenDeleteConfirmation(false)}
+            confirm={() => deleteItem()} />
         <div className="display-space-between mb-5">
             <SearchBar isLoading={listDataSwe?.isLoading} onSearch={(keyword) => searchData(keyword)} />
         </div>
@@ -120,7 +133,6 @@ export default function TablePayment() {
                     <tr>
                         <th>No</th>
                         <th>Client ID</th>
-                        <th>Email</th>
                         <th>Bank Code</th>
                         <th>Bank Name</th>
                         <th>Account Type</th>
@@ -130,8 +142,8 @@ export default function TablePayment() {
                     </tr>
                 </thead>
                 <tbody>
-                    {(listDataSwe?.isLoading && dataList.length <= 0) && <tr><td colspan="3"><div className="text-center">Loading...</div></td></tr>}
-                    {(!listDataSwe?.isLoading && dataList.length <= 0) && <tr><td colspan="3"><div className="text-center">No Data</div></td></tr>}
+                    {(listDataSwe?.isLoading && dataList.length <= 0) && <tr><td colspan="8"><div className="text-center">Loading...</div></td></tr>}
+                    {(!listDataSwe?.isLoading && dataList.length <= 0) && <tr><td colspan="8"><div className="text-center">No Data</div></td></tr>}
                     {dataList.length > 0 && dataList?.map((item,i) => {
                         return <tr 
                         key={i} 
@@ -139,7 +151,6 @@ export default function TablePayment() {
                         onClick={() => selectItem(i)}>
                             <td>{(page*limit) + i + 1}</td>
                             <td>{item?.clientId}</td>
-                            <td>--</td>
                             <td>{item?.bankCode}</td>
                             <td>{item?.bankName}</td>
                             <td>{item?.accountType}</td>
@@ -158,5 +169,5 @@ export default function TablePayment() {
                 onPageChange={(val) => changePage(val?.selected)}
                 pageCount={total / limit}/>
         </div>
-    </div>
+    </ReactHotkeys>
 }

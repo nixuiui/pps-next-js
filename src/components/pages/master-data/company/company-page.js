@@ -1,31 +1,33 @@
 import { Tabs, Tab } from '@paljs/ui/Tabs';
-import { useEffect, useState } from 'react';
-import ReactPaginate from 'react-paginate';
-import { getLanguage } from '../../../../helpers/language';
 import Layout from '../../../../Layouts/index';
-import { getListCompaniesApi } from '../../../../services/api/company.api';
-import { getListCompanyPaymentsSwr } from '../../../../services/swr/company-payment.swr';
-import { getListCompaniesSwr } from '../../../../services/swr/company.swr';
-import SearchBar from '../../../widget/searchbar';
 import CompanyPaymentForm from './company-payment-form';
+import CompanyForm from './company-form';
 import TableCompany from './table-company';
 import TablePayment from './table-payment';
+import { useState } from 'react';
 
 export default function CompanyPage() {
+    
+    const [tab, setTab] = useState('payment')
+
+    function selectTab(num) {
+        if(num == 0) {
+            setTab('payment')
+        } else {
+            setTab('company')
+        }
+    }
 
     return <Layout title="Users">
-        <CompanyPaymentForm />
+        <CompanyPaymentForm isOpen={false} />
+        <CompanyForm isOpen={false} />
         <div className="card no-padding mb-5">
-            <Tabs activeIndex={0} fullWidth>
+            <Tabs activeIndex={0} fullWidth onSelect={(number) => selectTab(number)}>
                 <Tab title="Payment" responsive>
-                    <TablePayment/>
+                    <TablePayment isOpen={tab == 'payment'}/>
                 </Tab>
-
-                {/* ------- */}
-                {/* COMPANY */}
-                {/* ------- */}
                 <Tab title="Company" responsive>
-                    <TableCompany/>
+                    <TableCompany isOpen={tab == 'company'}/>
                 </Tab>
             </Tabs>
         </div>

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { getLanguage } from '../../../../helpers/language';
 import { getListCompaniesSwr } from '../../../../services/swr/company.swr';
-import CompanyPaymentForm from './company-payment-form';
 import SearchBar from "../../../widget/searchbar";
 import ReactPaginate from 'react-paginate';
+import ReactHotkeys from 'react-hot-keys';
+import { deleteCompanyApi } from '../../../../services/api/company.api';
+import { ConfirmationModal } from '../../../widget/modal';
 
-export default function TableCompany() {
+export default function TableCompany(props) {
 
     const lang = getLanguage()
 
@@ -67,11 +69,14 @@ export default function TableCompany() {
     
     // --------------<ACTION>--------------
     function handleKeyDown(keyName, e, handle) {
-        console.log(e.key)
-        if(e.key == 'F10') setOpenForm(true)
-        else if(e.key == 'F12') closeForm()
-        else if(e.shiftKey && e.key == 'F2') openEditForm()
-        else if(e.key == 'Backspace') confirmationDelete()
+        if(props?.isOpen) {
+            console.log("Company")
+            console.log(e.key)
+            if(e.key == 'F10') setOpenForm(true)
+            else if(e.key == 'F12') closeForm()
+            else if(e.shiftKey && e.key == 'F2') openEditForm()
+            else if(e.key == 'Backspace') confirmationDelete()
+        }
     }
 
     const [indexSelected, setIndexSelected] = useState(-1)
@@ -102,7 +107,7 @@ export default function TableCompany() {
     }
     function deleteItem() {
         if(indexSelected > -1) {
-            deleteUserApi(selectedItem()?._id)
+            deleteCompanyApi(selectedItem()?._id)
             setOpenDeleteConfirmation(false)
             setIndexSelected(-1)
             dataList.splice(indexSelected, 1)
@@ -111,7 +116,15 @@ export default function TableCompany() {
     }
     // --------------<ACTION>--------------
 
-    return <div>
+    return <ReactHotkeys
+        keyName="F10,F12,shift+F2,backspace" 
+        onKeyDown={handleKeyDown}>
+        <ConfirmationModal 
+            isOpen={isOpenDeleteConfirmation}
+            title="Delete Item"
+            description="Do you want to delete this item?"
+            cancel={() => setOpenDeleteConfirmation(false)}
+            confirm={() => deleteItem()} />
         <div className="display-space-between mb-5">
             <SearchBar isLoading={listDataSwe?.isLoading} onSearch={(keyword) => searchData(keyword)} />
         </div>
@@ -141,5 +154,5 @@ export default function TableCompany() {
                 onPageChange={(val) => changePage(val?.selected)}
                 pageCount={total / limit}/>
         </div>
-    </div>
+    </ReactHotkeys>
 }
