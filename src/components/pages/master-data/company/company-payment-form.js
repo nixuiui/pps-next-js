@@ -1,12 +1,13 @@
-import { Row, Col, Button } from '@paljs/ui';
+import { Row, Col, Button, Spinner } from '@paljs/ui';
 import Select from '@paljs/ui/Select';
 import { InputGroup } from '@paljs/ui';
 import { useEffect, useState } from 'react';
-import { insertUserApi, updateUserApi } from '../../../../services/api/user.api';
-import { convertListToOptions } from '../../../../helpers/general';
+import { convertListToOptions, dateFormatInput } from '../../../../helpers/general';
 import { getCompaniesApi } from '../../../../services/api/master-data.api'
 import { getLanguage } from '../../../../helpers/language'
 import ReactHotkeys from 'react-hot-keys';
+import { acountTypeOptions } from '../../../../helpers/consts';
+import { insertCompanyPaymentsApi, updateCompanyPaymentsApi } from '../../../../services/api/company-payment.api';
 
 export default function CompanyPaymentForm(props) {
 
@@ -14,21 +15,19 @@ export default function CompanyPaymentForm(props) {
 
     // --------------<ACTION>--------------
     function handleKeyDown(keyName, e, handle) {
-        if(e.key == 'F1') sendData()
+        console.log("SAVE PAYMENT")
+        if(props?.isOpen) {
+            console.log("SAVE2 PAYMENT")
+            if(e.key == 'F1') sendData()
+        }
     }
     // --------------<ACTION>--------------
-
-    const roles = [
-        {label: "Administrator", value: "administrator"},
-        {label: "Accounting", value: "accounting_dept"},
-        {label: "Sales", value: "sales_dept"},
-    ]
 
     const [companies, setCompanies] = useState([])
     useEffect(() => {
         getCompaniesApi().then(res => {
-        var options = convertListToOptions(res, lang == 'jp' ? 'nameJa' : 'name')
-        setCompanies([...options])
+            var options = convertListToOptions(res, lang == 'jp' ? 'nameJa' : 'name')
+            setCompanies([...options])
         })
     }, [])
 
@@ -41,59 +40,61 @@ export default function CompanyPaymentForm(props) {
 
     useEffect(() => {
         if(props?.isEdit) {
-            console.log("EDIT")
-            console.log(props?.data)
-            console.log(props?.isEdit)
             setFormState({
                 ...formState,
-                userId: props?.data?.userId,
-                name: props?.data?.name,
-                email: props?.data?.email,
-                nameInKana: props?.data?.nameInKana,
-                department: props?.data?.department,
-                searchKey: props?.data?.searchKey,
-                division: props?.data?.division,
-                remarks: props?.data?.remarks,
                 company: companies?.find((val) => val?.value?._id == props?.data?.company?._id),
-                role: roles?.find((val) => val?.value == props?.data?.role)
+                clientId: props?.data?.clientId,
+                bankCode: props?.data?.bankCode,
+                bankName: props?.data?.bankName,
+                bankNameJa: props?.data?.bankNameJa,
+                branchCode: props?.data?.branchCode,
+                branchName: props?.data?.branchName,
+                branchNameJa: props?.data?.branchNameJa,
+                accountType: acountTypeOptions?.find((val) => val?.value == props?.data?.accountType),
+                accountNumber: props?.data?.accountNumber,
+                accountHolder: props?.data?.accountHolder,
+                closingDate: dateFormatInput(props?.data?.closingDate),
+                regulatedAmount: props?.data?.regulatedAmount,
             })
         }
     }, [props?.isOpen])
 
     const sendData = async () => {
         var formData = {
-            userId: formState?.userId,
-            name: formState?.name,
-            email: formState?.email,
-            nameInKana: formState?.nameInKana,
-            department: formState?.department,
-            searchKey: formState?.searchKey,
-            division: formState?.division,
-            remarks: formState?.remarks,
-            password: formState?.password,
             company: formState?.company?.value?._id,
-            role: formState?.role?.value,
+            clientId: formState?.clientId,
+            bankCode: formState?.bankCode,
+            bankName: formState?.bankName,
+            bankNameJa: formState?.bankNameJa,
+            branchCode: formState?.branchCode,
+            branchName: formState?.branchName,
+            branchNameJa: formState?.branchNameJa,
+            accountType: formState?.accountType?.value,
+            accountNumber: formState?.accountNumber,
+            accountHolder: formState?.accountHolder,
+            closingDate: formState?.closingDate,
+            regulatedAmount: formState?.regulatedAmount,
         }
         try {
             setLoading(true)
             if(props?.isEdit) {
-                var res = await updateUserApi(formData, props?.data?._id)
+                var res = await updateCompanyPaymentsApi(formData, props?.data?._id)
                 props?.dataUpdated(res)
             } else {
-                var res = await insertUserApi(formData)
+                var res = await insertCompanyPaymentsApi(formData)
                 props?.dataInserted(res)
             }
+            setFormState({})
         } catch(err) {
             console.log(err)
             setErrorText({...errorText, error: err})
         }
-        setFormState({})
         setErrorText(null)
         setLoading(false)
     }
 
     return <ReactHotkeys
-        keyName="F1" 
+        keyName={"F1"} 
         onKeyDown={handleKeyDown}>
         {isLoading && <Spinner>Loading...</Spinner>}
         <div className="card mb-5" style={{ display: props?.isOpen ? "block" : "none" }}>
@@ -102,29 +103,15 @@ export default function CompanyPaymentForm(props) {
             </div>
             <Row className="mb-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Company ID
+                    Company
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>
                     <Select 
                         size="Small" 
-                        options={[]}
+                        options={companies}
                         name="company"
-                        onChange={(val) => setFormState({...formState, company: val?.value})}
-                        placeholder="" />
-                </Col>
-            </Row>
-            <Row className="mb-3">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Company Name
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <InputGroup fullWidth size="Small">
-                        <input 
-                            type="text" 
-                            name="companyName"
-                            onChange={(e) => onChangeInput(e)}
-                            placeholder="" />
-                    </InputGroup>
+                        value={formState?.company}
+                        onChange={(val) => setFormState({...formState, company: val})} />
                 </Col>
             </Row>
             <Row className="mb-3">
@@ -143,6 +130,7 @@ export default function CompanyPaymentForm(props) {
                         <input 
                             type="text" 
                             name="clientId"
+                            value={formState?.clientId}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -157,6 +145,7 @@ export default function CompanyPaymentForm(props) {
                         <input 
                             type="text" 
                             name="bankCode"
+                            value={formState?.bankCode}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -171,6 +160,7 @@ export default function CompanyPaymentForm(props) {
                         <input 
                             type="text" 
                             name="bankName"
+                            value={formState?.bankName}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -179,9 +169,10 @@ export default function CompanyPaymentForm(props) {
                     <InputGroup fullWidth size="Small">
                         <input 
                             type="text" 
-                            name="bankName2"
+                            name="bankNameJa"
+                            value={formState?.bankNameJa}
                             onChange={(e) => onChangeInput(e)}
-                            placeholder="" />
+                            placeholder="Name In Ja" />
                     </InputGroup>
                 </Col>
             </Row>
@@ -194,6 +185,7 @@ export default function CompanyPaymentForm(props) {
                         <input 
                             type="text" 
                             name="branchCode"
+                            value={formState?.branchCode}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -208,6 +200,7 @@ export default function CompanyPaymentForm(props) {
                         <input 
                             type="text" 
                             name="branchName"
+                            value={formState?.branchName}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -216,7 +209,8 @@ export default function CompanyPaymentForm(props) {
                     <InputGroup fullWidth size="Small">
                         <input 
                             type="text" 
-                            name="branchName2"
+                            name="branchNameJa"
+                            value={formState?.branchNameJa}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -227,12 +221,12 @@ export default function CompanyPaymentForm(props) {
                     Account Type
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <Select 
+                <Select 
                         size="Small" 
-                        options={[]}
+                        options={acountTypeOptions}
                         name="accountType"
-                        onChange={(val) => setFormState({...formState, accountType: val?.value})}
-                        placeholder="" />
+                        value={formState?.accountType}
+                        onChange={(val) => setFormState({...formState, accountType: val})} />
                 </Col>
             </Row>
             <Row className="mb-3">
@@ -244,6 +238,7 @@ export default function CompanyPaymentForm(props) {
                         <input 
                             type="text" 
                             name="accountNumber"
+                            value={formState?.accountNumber}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -258,6 +253,7 @@ export default function CompanyPaymentForm(props) {
                         <input 
                             type="text" 
                             name="accountHolder"
+                            value={formState?.accountHolder}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -268,12 +264,14 @@ export default function CompanyPaymentForm(props) {
                     Closing Date
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <Select 
-                        size="Small" 
-                        options={[]}
-                        name="closingDate"
-                        onChange={(val) => setFormState({...formState, paymentDate: val?.value})}
-                        placeholder="" />
+                    <InputGroup fullWidth size="Small">
+                        <input 
+                            type="date" 
+                            name="closingDate"
+                            value={formState?.closingDate}
+                            onChange={(e) => onChangeInput(e)}
+                            placeholder="" />
+                    </InputGroup>
                 </Col>
             </Row>
             <Row className="mb-3">
@@ -285,6 +283,7 @@ export default function CompanyPaymentForm(props) {
                         <input 
                             type="text" 
                             name="regulatedAmount"
+                            value={formState?.regulatedAmount}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -294,7 +293,11 @@ export default function CompanyPaymentForm(props) {
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <Button status="Primary">
+                    <Button 
+                        status="Primary" 
+                        size="Small"
+                        disabled={isLoading}
+                        onClick={sendData}>
                         Save
                     </Button>
                 </Col>

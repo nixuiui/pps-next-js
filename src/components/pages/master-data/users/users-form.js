@@ -8,6 +8,7 @@ import { convertListToOptions } from '../../../../helpers/general';
 import { getCompaniesApi } from '../../../../services/api/master-data.api'
 import { getLanguage } from '../../../../helpers/language'
 import ReactHotkeys from 'react-hot-keys';
+import { roles } from '../../../../helpers/consts';
 
 export default function UsersForm(props) {
 
@@ -18,12 +19,6 @@ export default function UsersForm(props) {
         if(e.key == 'F1') sendData()
     }
     // --------------<ACTION>--------------
-
-    const roles = [
-        {label: "Administrator", value: "administrator"},
-        {label: "Accounting", value: "accounting_dept"},
-        {label: "Sales", value: "sales_dept"},
-    ]
 
     const [companies, setCompanies] = useState([])
     useEffect(() => {
@@ -84,11 +79,11 @@ export default function UsersForm(props) {
                 var res = await insertUserApi(formData)
                 props?.dataInserted(res)
             }
+            setFormState({})
         } catch(err) {
             console.log(err)
             setErrorText({...errorText, error: err})
         }
-        setFormState({})
         setErrorText(null)
         setLoading(false)
     }

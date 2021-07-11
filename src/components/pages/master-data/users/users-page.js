@@ -152,8 +152,8 @@ export default function UsersPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {(listUserSwr?.isLoading && dataList.length <= 0) && <tr><td colspan="9"><div className="text-center">Loading...</div></td></tr>}
-                            {(!listUserSwr?.isLoading && dataList.length <= 0) && <tr><td colspan="9"><div className="text-center">No Data</div></td></tr>}
+                            {(listUserSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="9"><div className="text-center">Loading...</div></td></tr>}
+                            {(!listUserSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="9"><div className="text-center">No Data</div></td></tr>}
                             {dataList.length > 0 && dataList?.map((item,i) => {
                                 return <tr 
                                     key={i} 

@@ -6,6 +6,7 @@ import { getListCompanyPaymentsSwr } from '../../../../services/swr/company-paym
 import ReactHotkeys from 'react-hot-keys';
 import { ConfirmationModal } from '../../../widget/modal';
 import { deleteCompanyPaymentsApi } from '../../../../services/api/company-payment.api';
+import { dateFormatInput } from '../../../../helpers/general';
 
 export default function TablePayment(props) {
 
@@ -28,11 +29,16 @@ export default function TablePayment(props) {
         console.log(number)
         setPage(number)
     }
+
+    useEffect(() => {
+        listDataSwr.mutate()
+        setIndexSelected(-1)
+    }, [props?.counter])
     
     const [isLoading, setLoading] = useState(false)
     const [dataList, setDataList] = useState([])
 
-    var listDataSwe = getListCompanyPaymentsSwr({
+    var listDataSwr = getListCompanyPaymentsSwr({
         search: search, 
         page: page+1, 
         limit: limit,
@@ -40,48 +46,34 @@ export default function TablePayment(props) {
         sortBy: "",
     })
     useEffect(() => {
-        setLoading(listDataSwe?.isLoading)
-        if(listDataSwe?.data?.data) {
-            setTotal(listDataSwe?.data?.totalAll)
-            setDataList([...listDataSwe?.data?.data])
+        setLoading(listDataSwr?.isLoading)
+        if(listDataSwr?.data?.data) {
+            setTotal(listDataSwr?.data?.totalAll)
+            setDataList([...listDataSwr?.data?.data])
         }
-    }, [listDataSwe?.data])
+    }, [listDataSwr?.data])
 
     // ------------------------------------------
     // [END] GET DATA & PAGINATION
     // ==========================================
-
-    // --------------<FROM>--------------
-    const [isOpenForm, setOpenForm] = useState(false)
-    const [isEdit, setEdit] = useState(false)
-    
-    function onCompletedForm() {
-        closeForm()
-        listDataSwe.mutate()
-    }
-    
-    function closeForm() {
-        setIndexSelected(-1)
-        setOpenForm(false)
-        setEdit(false)
-    }
-    // --------------<FROM>--------------
     
     // --------------<ACTION>--------------
     function handleKeyDown(keyName, e, handle) {
         if(props?.isOpen) {
             console.log("Payment")
-            if(e.key == 'F10') setOpenForm(true)
-            else if(e.key == 'F12') closeForm()
-            else if(e.shiftKey && e.key == 'F2') openEditForm()
+            if(e.key == 'F10') props?.openForm()
+            else if(e.key == 'F12') props?.closeForm()
+            else if(e.shiftKey && e.key == 'F2') props?.openEditForm()
             else if(e.key == 'Backspace') confirmationDelete()
         }
     }
 
     const [indexSelected, setIndexSelected] = useState(-1)
     function selectItem(i) {
-        if(i != indexSelected)
+        if(i != indexSelected) {
             setIndexSelected(i)
+            props?.onSelectItem(dataList[i])
+        }
         else 
             setIndexSelected(-1)
     }
@@ -89,13 +81,6 @@ export default function TablePayment(props) {
     function selectedItem() {
         if (indexSelected < 0) return null
         else return dataList[indexSelected]
-    }
-
-    function openEditForm() {
-        if(selectedItem() != null) {
-            setEdit(true)
-            setOpenForm(true)
-        }
     }
     
     const [isOpenDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
@@ -125,7 +110,7 @@ export default function TablePayment(props) {
             cancel={() => setOpenDeleteConfirmation(false)}
             confirm={() => deleteItem()} />
         <div className="display-space-between mb-5">
-            <SearchBar isLoading={listDataSwe?.isLoading} onSearch={(keyword) => searchData(keyword)} />
+            <SearchBar isLoading={listDataSwr?.isLoading} onSearch={(keyword) => searchData(keyword)} />
         </div>
         <div className=" table-responsive">
             <table className="table table-bordered">
@@ -142,8 +127,8 @@ export default function TablePayment(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    {(listDataSwe?.isLoading && dataList.length <= 0) && <tr><td colspan="8"><div className="text-center">Loading...</div></td></tr>}
-                    {(!listDataSwe?.isLoading && dataList.length <= 0) && <tr><td colspan="8"><div className="text-center">No Data</div></td></tr>}
+                    {(listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="8"><div className="text-center">Loading...</div></td></tr>}
+                    {(!listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="8"><div className="text-center">No Data</div></td></tr>}
                     {dataList.length > 0 && dataList?.map((item,i) => {
                         return <tr 
                         key={i} 
@@ -155,7 +140,7 @@ export default function TablePayment(props) {
                             <td>{item?.bankName}</td>
                             <td>{item?.accountType}</td>
                             <td>{item?.accountHolder}</td>
-                            <td>{item?.closingDate}</td>
+                            <td>{dateFormatInput(item?.closingDate)}</td>
                             <td>{item?.regulatedAmount}</td>
                         </tr>
                     })}

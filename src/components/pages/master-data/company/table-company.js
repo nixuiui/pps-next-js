@@ -28,11 +28,16 @@ export default function TableCompany(props) {
         console.log(number)
         setPage(number)
     }
+
+    useEffect(() => {
+        listDataSwr.mutate()
+        setIndexSelected(-1)
+    }, [props?.counter])
     
     const [isLoading, setLoading] = useState(false)
     const [dataList, setDataList] = useState([])
 
-    var listDataSwe = getListCompaniesSwr({
+    var listDataSwr = getListCompaniesSwr({
         search: search, 
         page: page+1, 
         limit: limit,
@@ -40,12 +45,12 @@ export default function TableCompany(props) {
         sortBy: "",
     })
     useEffect(() => {
-        setLoading(listDataSwe?.isLoading)
-        if(listDataSwe?.data?.data) {
-            setTotal(listDataSwe?.data?.totalAll)
-            setDataList([...listDataSwe?.data?.data])
+        setLoading(listDataSwr?.isLoading)
+        if(listDataSwr?.data?.data) {
+            setTotal(listDataSwr?.data?.totalAll)
+            setDataList([...listDataSwr?.data?.data])
         }
-    }, [listDataSwe?.data])
+    }, [listDataSwr?.data])
 
     // ------------------------------------------
     // [END] GET DATA & PAGINATION
@@ -57,7 +62,7 @@ export default function TableCompany(props) {
     
     function onCompletedForm() {
         closeForm()
-        listDataSwe.mutate()
+        listDataSwr.mutate()
     }
     
     function closeForm() {
@@ -72,17 +77,19 @@ export default function TableCompany(props) {
         if(props?.isOpen) {
             console.log("Company")
             console.log(e.key)
-            if(e.key == 'F10') setOpenForm(true)
-            else if(e.key == 'F12') closeForm()
-            else if(e.shiftKey && e.key == 'F2') openEditForm()
+            if(e.key == 'F10') props?.openForm()
+            else if(e.key == 'F12') props?.closeForm()
+            else if(e.shiftKey && e.key == 'F2') props?.openEditForm()
             else if(e.key == 'Backspace') confirmationDelete()
         }
     }
 
     const [indexSelected, setIndexSelected] = useState(-1)
     function selectItem(i) {
-        if(i != indexSelected)
+        if(i != indexSelected) {
             setIndexSelected(i)
+            props?.onSelectItem(dataList[i])
+        }
         else 
             setIndexSelected(-1)
     }
@@ -90,13 +97,6 @@ export default function TableCompany(props) {
     function selectedItem() {
         if (indexSelected < 0) return null
         else return dataList[indexSelected]
-    }
-
-    function openEditForm() {
-        if(selectedItem() != null) {
-            setEdit(true)
-            setOpenForm(true)
-        }
     }
     
     const [isOpenDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
@@ -126,19 +126,19 @@ export default function TableCompany(props) {
             cancel={() => setOpenDeleteConfirmation(false)}
             confirm={() => deleteItem()} />
         <div className="display-space-between mb-5">
-            <SearchBar isLoading={listDataSwe?.isLoading} onSearch={(keyword) => searchData(keyword)} />
+            <SearchBar isLoading={listDataSwr?.isLoading} onSearch={(keyword) => searchData(keyword)} />
         </div>
         <div className=" table-responsive">
             <table className="table">
                 <tbody>
-                    {(listDataSwe?.isLoading && dataList.length <= 0) && <tr><td colspan="3"><div className="text-center">Loading...</div></td></tr>}
-                    {(!listDataSwe?.isLoading && dataList.length <= 0) && <tr><td colspan="3"><div className="text-center">No Data</div></td></tr>}
+                    {(listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="3"><div className="text-center">Loading...</div></td></tr>}
+                    {(!listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="3"><div className="text-center">No Data</div></td></tr>}
                     {dataList.length > 0 && dataList?.map((item,i) => {
                         return <tr 
                             key={i} 
                             className={"cursor-pointer " + (indexSelected == i ? "selected" : "")} 
                             onClick={() => selectItem(i)}>
-                            <td>{lang == 'en' ? item?.name : item?.nameJa}</td>
+                            <td>{lang == 'en' ? item?.name : item?.nameJa}, {item?.companyType}</td>
                             <td>{item?.address}</td>
                             <td>{item?.phone}</td>
                         </tr>

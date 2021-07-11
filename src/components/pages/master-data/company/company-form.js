@@ -1,12 +1,10 @@
 import { Row, Col, Button, Spinner } from '@paljs/ui';
-import Select from '@paljs/ui/Select';
 import { InputGroup, Radio } from '@paljs/ui';
 import { useEffect, useState } from 'react';
-import { insertUserApi, updateUserApi } from '../../../../services/api/user.api';
-import { convertListToOptions } from '../../../../helpers/general';
-import { getCompaniesApi } from '../../../../services/api/master-data.api'
 import { getLanguage } from '../../../../helpers/language'
 import ReactHotkeys from 'react-hot-keys';
+import { insertCompanyApi, updateCompanyApi } from '../../../../services/api/company.api';
+import { companyTypes } from '../../../../helpers/consts';
 
 export default function CompanyForm(props) {
 
@@ -14,23 +12,13 @@ export default function CompanyForm(props) {
 
     // --------------<ACTION>--------------
     function handleKeyDown(keyName, e, handle) {
-        if(e.key == 'F1') sendData()
+        console.log("SAVE COMPANY")
+        if(props?.isOpen) {
+            console.log("SAVE2 COMPANY")
+            if(e.key == 'F1') sendData()
+        }
     }
     // --------------<ACTION>--------------
-
-    const roles = [
-        {label: "Administrator", value: "administrator"},
-        {label: "Accounting", value: "accounting_dept"},
-        {label: "Sales", value: "sales_dept"},
-    ]
-
-    const [companies, setCompanies] = useState([])
-    useEffect(() => {
-        getCompaniesApi().then(res => {
-        var options = convertListToOptions(res, lang == 'jp' ? 'nameJa' : 'name')
-        setCompanies([...options])
-        })
-    }, [])
 
     const [isLoading, setLoading] = useState(false)
     const [errorText, setErrorText] = useState(null)
@@ -41,59 +29,48 @@ export default function CompanyForm(props) {
 
     useEffect(() => {
         if(props?.isEdit) {
-            console.log("EDIT")
             console.log(props?.data)
-            console.log(props?.isEdit)
             setFormState({
                 ...formState,
-                userId: props?.data?.userId,
+                companyId: props?.data?.companyId,
                 name: props?.data?.name,
-                email: props?.data?.email,
+                companyType: props?.data?.companyType,
                 nameInKana: props?.data?.nameInKana,
-                department: props?.data?.department,
-                searchKey: props?.data?.searchKey,
-                division: props?.data?.division,
-                remarks: props?.data?.remarks,
-                company: companies?.find((val) => val?.value?._id == props?.data?.company?._id),
-                role: roles?.find((val) => val?.value == props?.data?.role)
+                address: props?.data?.address,
+                phone: props?.data?.phone
             })
         }
     }, [props?.isOpen])
 
     const sendData = async () => {
         var formData = {
-            userId: formState?.userId,
+            companyId: formState?.companyId,
             name: formState?.name,
-            email: formState?.email,
+            companyType: formState?.companyType,
             nameInKana: formState?.nameInKana,
-            department: formState?.department,
-            searchKey: formState?.searchKey,
-            division: formState?.division,
-            remarks: formState?.remarks,
-            password: formState?.password,
-            company: formState?.company?.value?._id,
-            role: formState?.role?.value,
+            address: formState?.address,
+            phone: formState?.phone
         }
         try {
             setLoading(true)
             if(props?.isEdit) {
-                var res = await updateUserApi(formData, props?.data?._id)
+                var res = await updateCompanyApi(formData, props?.data?._id)
                 props?.dataUpdated(res)
             } else {
-                var res = await insertUserApi(formData)
+                var res = await insertCompanyApi(formData)
                 props?.dataInserted(res)
             }
+            setFormState({})
         } catch(err) {
             console.log(err)
             setErrorText({...errorText, error: err})
         }
-        setFormState({})
         setErrorText(null)
         setLoading(false)
     }
 
     return <ReactHotkeys
-        keyName="F1" 
+        keyName={props?.isOpen ? "F1" : ""}
         onKeyDown={handleKeyDown}>
         {isLoading && <Spinner>Loading...</Spinner>}
         <div className="card mb-5" style={{ display: props?.isOpen ? "block" : "none" }}>
@@ -105,23 +82,11 @@ export default function CompanyForm(props) {
                     Company ID
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <Select 
-                        size="Small" 
-                        options={[]}
-                        name="company"
-                        onChange={(val) => setFormState({...formState, company: val?.value})}
-                        placeholder="" />
-                </Col>
-            </Row>
-            <Row className="mb-3">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Company Name
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
                     <InputGroup fullWidth size="Small">
                         <input 
                             type="text" 
-                            name="companyName"
+                            name="companyId"
+                            value={formState?.companyId}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -129,20 +94,41 @@ export default function CompanyForm(props) {
             </Row>
             <Row className="mb-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Supplier Account Information
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                </Col>
-            </Row>
-            <Row className="mb-3">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Client ID
+                    Name
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>
                     <InputGroup fullWidth size="Small">
                         <input 
                             type="text" 
-                            name="clientId"
+                            name="name"
+                            value={formState?.name}
+                            onChange={(e) => onChangeInput(e)}
+                            placeholder="" />
+                    </InputGroup>
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <div className="company-type-list">
+                        {companyTypes?.map((val, i) => {
+                            return <span 
+                                key={i}
+                                className={"company-type-item " + (formState?.companyType == val ? "selected" : "")}
+                                onClick={() => setFormState({...formState, ['companyType']: val})}>
+                                {val}
+                            </span>
+                        })}
+                    </div>
+                </Col>
+            </Row>
+            <Row className="mb-3">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                    Name In Kana
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <InputGroup fullWidth size="Small">
+                        <input 
+                            type="text" 
+                            name="nameInKana"
+                            value={formState?.nameInKana}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -150,13 +136,14 @@ export default function CompanyForm(props) {
             </Row>
             <Row className="mb-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Bank Code
+                    Address
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>
                     <InputGroup fullWidth size="Small">
                         <input 
                             type="text" 
-                            name="bankCode"
+                            name="address"
+                            value={formState?.address}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -164,127 +151,14 @@ export default function CompanyForm(props) {
             </Row>
             <Row className="mb-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Bank Name
+                    Phone
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>
                     <InputGroup fullWidth size="Small">
                         <input 
                             type="text" 
-                            name="bankName"
-                            onChange={(e) => onChangeInput(e)}
-                            placeholder="" />
-                    </InputGroup>
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <InputGroup fullWidth size="Small">
-                        <input 
-                            type="text" 
-                            name="bankName2"
-                            onChange={(e) => onChangeInput(e)}
-                            placeholder="" />
-                    </InputGroup>
-                </Col>
-            </Row>
-            <Row className="mb-3">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Branch Code
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <InputGroup fullWidth size="Small">
-                        <input 
-                            type="text" 
-                            name="branchCode"
-                            onChange={(e) => onChangeInput(e)}
-                            placeholder="" />
-                    </InputGroup>
-                </Col>
-            </Row>
-            <Row className="mb-3">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Branch Name
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <InputGroup fullWidth size="Small">
-                        <input 
-                            type="text" 
-                            name="branchName"
-                            onChange={(e) => onChangeInput(e)}
-                            placeholder="" />
-                    </InputGroup>
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <InputGroup fullWidth size="Small">
-                        <input 
-                            type="text" 
-                            name="branchName2"
-                            onChange={(e) => onChangeInput(e)}
-                            placeholder="" />
-                    </InputGroup>
-                </Col>
-            </Row>
-            <Row className="mb-3">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Account Type
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <Select 
-                        size="Small" 
-                        options={[]}
-                        name="accountType"
-                        onChange={(val) => setFormState({...formState, accountType: val?.value})}
-                        placeholder="" />
-                </Col>
-            </Row>
-            <Row className="mb-3">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Account Number
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <InputGroup fullWidth size="Small">
-                        <input 
-                            type="text" 
-                            name="accountNumber"
-                            onChange={(e) => onChangeInput(e)}
-                            placeholder="" />
-                    </InputGroup>
-                </Col>
-            </Row>
-            <Row className="mb-3">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Account Holder
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <InputGroup fullWidth size="Small">
-                        <input 
-                            type="text" 
-                            name="accountHolder"
-                            onChange={(e) => onChangeInput(e)}
-                            placeholder="" />
-                    </InputGroup>
-                </Col>
-            </Row>
-            <Row className="mb-3">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Closing Date
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <Select 
-                        size="Small" 
-                        options={[]}
-                        name="closingDate"
-                        onChange={(val) => setFormState({...formState, paymentDate: val?.value})}
-                        placeholder="" />
-                </Col>
-            </Row>
-            <Row className="mb-3">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Regulated Amount
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <InputGroup fullWidth size="Small">
-                        <input 
-                            type="text" 
-                            name="regulatedAmount"
+                            name="phone"
+                            value={formState?.phone}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
                     </InputGroup>
@@ -294,7 +168,11 @@ export default function CompanyForm(props) {
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <Button status="Primary">
+                    <Button 
+                        status="Primary" 
+                        size="Small"
+                        disabled={isLoading}
+                        onClick={sendData}>
                         Save
                     </Button>
                 </Col>
