@@ -32,6 +32,19 @@ export const getDetailCompanyApi = async (id) => {
     }
 };
 
+export const getCompanyId = async () => {
+    try {
+        const response = await requestApi({
+            url: `${process.env.NEXT_PUBLIC_REST_API_URL}/user/company-id`,
+            method: 'GET',
+            isAuth: true
+        })
+        return response
+    } catch (err) {
+        throw err
+    }
+};
+
 export const insertCompanyApi = async (data) => {
     try {
         const response = await requestApi({

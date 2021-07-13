@@ -3,7 +3,7 @@ import { InputGroup, Radio } from '@paljs/ui';
 import { useEffect, useState } from 'react';
 import { getLanguage } from '../../../../helpers/language'
 import ReactHotkeys from 'react-hot-keys';
-import { insertCompanyApi, updateCompanyApi } from '../../../../services/api/company.api';
+import { getCompanyId, insertCompanyApi, updateCompanyApi } from '../../../../services/api/company.api';
 import { companyTypes } from '../../../../helpers/consts';
 
 export default function CompanyForm(props) {
@@ -52,6 +52,7 @@ export default function CompanyForm(props) {
                 address: "",
                 phone: ""
             })
+            getCompanyId().then(res => setFormState({...formState, companyId: res}))
         }
     }, [props?.isOpen])
 
@@ -99,6 +100,7 @@ export default function CompanyForm(props) {
                         <input 
                             type="text" 
                             name="companyId"
+                            disabled={true}
                             value={formState?.companyId}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
