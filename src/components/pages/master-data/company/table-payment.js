@@ -7,6 +7,7 @@ import ReactHotkeys from 'react-hot-keys';
 import { ConfirmationModal } from '../../../widget/modal';
 import { deleteCompanyPaymentsApi } from '../../../../services/api/company-payment.api';
 import { dateFormatInput } from '../../../../helpers/general';
+import { Button } from '@paljs/ui';
 
 export default function TablePayment(props) {
 
@@ -60,11 +61,9 @@ export default function TablePayment(props) {
     // --------------<ACTION>--------------
     function handleKeyDown(keyName, e, handle) {
         if(props?.isOpen) {
-            console.log("Payment")
-            if(e.key == 'F10') props?.openForm()
-            else if(e.key == 'F12') props?.closeForm()
-            else if(e.shiftKey && e.key == 'F2') props?.openEditForm()
-            else if(e.key == 'Backspace') confirmationDelete()
+            if(e.key == 'F9') props?.openForm()
+            else if(e.key == 'F10') props?.openEditForm()
+            else if(e.shiftKey && e.key == 'F12') confirmationDelete()
         }
     }
 
@@ -101,7 +100,7 @@ export default function TablePayment(props) {
     // --------------<ACTION>--------------
 
     return <ReactHotkeys
-        keyName="F10,F12,shift+F2,backspace" 
+        keyName="F9,F10,shift+F10" 
         onKeyDown={handleKeyDown}>
         <ConfirmationModal 
             isOpen={isOpenDeleteConfirmation}
@@ -110,6 +109,31 @@ export default function TablePayment(props) {
             cancel={() => setOpenDeleteConfirmation(false)}
             confirm={() => deleteItem()} />
         <div className="display-space-between mb-5">
+            <div className="flex-center">
+                <Button 
+                    status="Primary" 
+                    size="Small"
+                    className="me-3"
+                    onClick={() => props?.openForm()}>
+                    Create (F9)
+                </Button>
+                <Button 
+                    status="Basic" 
+                    size="Small"
+                    className="me-3"
+                    disabled={indexSelected < 0}
+                    onClick={() => props?.openEditForm()}>
+                    Update (F10)
+                </Button>
+                <Button 
+                    status="Basic" 
+                    size="Small"
+                    className="me-3"
+                    disabled={indexSelected < 0}
+                    onClick={() => confirmationDelete(true)}>
+                    Delete (SF10)
+                </Button>
+            </div>
             <SearchBar isLoading={listDataSwr?.isLoading} onSearch={(keyword) => searchData(keyword)} />
         </div>
         <div className=" table-responsive">

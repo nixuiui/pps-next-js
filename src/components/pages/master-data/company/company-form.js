@@ -12,13 +12,17 @@ export default function CompanyForm(props) {
 
     // --------------<ACTION>--------------
     function handleKeyDown(keyName, e, handle) {
-        console.log("SAVE COMPANY")
         if(props?.isOpen) {
-            console.log("SAVE2 COMPANY")
             if(e.key == 'F1') sendData()
+            else if(e.key == 'F12') closeForm()
         }
     }
     // --------------<ACTION>--------------
+
+    function closeForm() {
+        setFormState(null)
+        props?.closeForm()
+    }
 
     const [isLoading, setLoading] = useState(false)
     const [errorText, setErrorText] = useState(null)
@@ -29,7 +33,6 @@ export default function CompanyForm(props) {
 
     useEffect(() => {
         if(props?.isEdit) {
-            console.log(props?.data)
             setFormState({
                 ...formState,
                 companyId: props?.data?.companyId,
@@ -38,6 +41,16 @@ export default function CompanyForm(props) {
                 nameInKana: props?.data?.nameInKana,
                 address: props?.data?.address,
                 phone: props?.data?.phone
+            })
+        } else {
+            setFormState({
+                ...formState,
+                companyId: "",
+                name: "",
+                companyType: "",
+                nameInKana: "",
+                address: "",
+                phone: ""
             })
         }
     }, [props?.isOpen])
@@ -70,7 +83,7 @@ export default function CompanyForm(props) {
     }
 
     return <ReactHotkeys
-        keyName={props?.isOpen ? "F1" : ""}
+        keyName={props?.isOpen ? "F1, F12" : ""}
         onKeyDown={handleKeyDown}>
         {isLoading && <Spinner>Loading...</Spinner>}
         <div className="card mb-5" style={{ display: props?.isOpen ? "block" : "none" }}>
@@ -171,9 +184,17 @@ export default function CompanyForm(props) {
                     <Button 
                         status="Primary" 
                         size="Small"
+                        className="me-3"
                         disabled={isLoading}
                         onClick={sendData}>
-                        Save
+                        Execute (F1)
+                    </Button>
+                    <Button 
+                        status="Basic" 
+                        size="Small"
+                        disabled={isLoading}
+                        onClick={closeForm}>
+                        EXIT (F12)
                     </Button>
                 </Col>
             </Row>

@@ -17,8 +17,14 @@ export default function UsersForm(props) {
     // --------------<ACTION>--------------
     function handleKeyDown(keyName, e, handle) {
         if(e.key == 'F1') sendData()
+        else if(e.key == 'F12') closeForm()
     }
     // --------------<ACTION>--------------
+
+    function closeForm() {
+        setFormState(null)
+        props?.closeForm()
+    }
 
     const [companies, setCompanies] = useState([])
     useEffect(() => {
@@ -38,8 +44,6 @@ export default function UsersForm(props) {
     useEffect(() => {
         if(props?.isEdit) {
             console.log("EDIT")
-            console.log(props?.data)
-            console.log(props?.isEdit)
             setFormState({
                 ...formState,
                 userId: props?.data?.userId,
@@ -53,7 +57,23 @@ export default function UsersForm(props) {
                 company: companies?.find((val) => val?.value?._id == props?.data?.company?._id),
                 role: roles?.find((val) => val?.value == props?.data?.role)
             })
+        } else {
+            console.log("CREATE")
+            setFormState({
+                ...formState,
+                userId: "",
+                name: "",
+                email: "",
+                nameInKana: "",
+                department: "",
+                searchKey: "",
+                division: "",
+                remarks: "",
+                company: null,
+                role: null
+            })
         }
+        console.log(formState)
     }, [props?.isOpen])
 
     const sendData = async () => {
@@ -89,7 +109,7 @@ export default function UsersForm(props) {
     }
 
     return <ReactHotkeys
-        keyName="F1" 
+        keyName="F1, F12"
         onKeyDown={handleKeyDown}>
         {isLoading && <Spinner>Loading...</Spinner>}
         <div className="card mb-5" style={{ display: props?.isOpen ? "block" : "none" }}>
@@ -98,7 +118,7 @@ export default function UsersForm(props) {
             </div>
             <Row className="mb-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    User ID
+                    User ID {formState?.userId}
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>
                     <InputGroup fullWidth size="Small">
@@ -271,9 +291,17 @@ export default function UsersForm(props) {
                     <Button 
                         status="Primary" 
                         size="Small"
+                        className="me-3"
                         disabled={isLoading}
                         onClick={sendData}>
-                        Save
+                        Execute (F1)
+                    </Button>
+                    <Button 
+                        status="Basic" 
+                        size="Small"
+                        disabled={isLoading}
+                        onClick={closeForm}>
+                        EXIT (F12)
                     </Button>
                 </Col>
             </Row>

@@ -70,11 +70,9 @@ export default function UsersPage() {
     
     // --------------<ACTION>--------------
     function handleKeyDown(keyName, e, handle) {
-        console.log(e.key)
-        if(e.key == 'F10') setOpenForm(true)
-        else if(e.key == 'F12') closeForm()
-        else if(e.shiftKey && e.key == 'F2') openEditForm()
-        else if(e.key == 'Backspace') confirmationDelete()
+        if(e.key == 'F9') setOpenForm(true)
+        else if(e.key == 'F10') openEditForm()
+        else if(e.shiftKey && e.key == 'F12') confirmationDelete()
     }
 
     const [indexSelected, setIndexSelected] = useState(-1)
@@ -115,12 +113,13 @@ export default function UsersPage() {
     // --------------<ACTION>--------------
     
     return <ReactHotkeys
-        keyName="F10,F12,shift+F2,backspace" 
+        keyName="F9,F10,shift+F10" 
         onKeyDown={handleKeyDown}>
         <Layout title="Users">
             <UsersForm 
                 isOpen={isOpenForm}
                 isEdit={isEdit}
+                closeForm={closeForm}
                 dataUpdated={(res) => onCompletedForm()}
                 dataInserted={(res) => onCompletedForm()}
                 data={selectedItem()} />
@@ -131,8 +130,33 @@ export default function UsersPage() {
                 cancel={() => setOpenDeleteConfirmation(false)}
                 confirm={() => deleteItem()} />
             <div className="card mb-5">
-                <div className="display-space-between mb-5">
-                    <h5 className="m-0">List of Users</h5>
+                <h5 className="m-0 mb-4">List of Users</h5>
+                <div className="display-space-between mb-3">
+                    <div className="flex-center">
+                        <Button 
+                            status="Primary" 
+                            size="Small"
+                            className="me-3"
+                            onClick={() => setOpenForm(true)}>
+                            Create (F9)
+                        </Button>
+                        <Button 
+                            status="Basic" 
+                            size="Small"
+                            className="me-3"
+                            disabled={indexSelected < 0}
+                            onClick={() => openEditForm(true)}>
+                            Update (F10)
+                        </Button>
+                        <Button 
+                            status="Basic" 
+                            size="Small"
+                            className="me-3"
+                            disabled={indexSelected < 0}
+                            onClick={() => confirmationDelete(true)}>
+                            Delete (SF10)
+                        </Button>
+                    </div>
                     <SearchBar isLoading={listUserSwr?.isLoading} onSearch={(keyword) => searchData(keyword)} />
                 </div>
                 <div className=" table-responsive">
@@ -152,8 +176,8 @@ export default function UsersPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {(listUserSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="9"><div className="text-center">Loading...</div></td></tr>}
-                            {(!listUserSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="9"><div className="text-center">No Data</div></td></tr>}
+                            {(listUserSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="10"><div className="text-center">Loading...</div></td></tr>}
+                            {(!listUserSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="10"><div className="text-center">No Data</div></td></tr>}
                             {dataList.length > 0 && dataList?.map((item,i) => {
                                 return <tr 
                                     key={i} 

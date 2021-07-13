@@ -47,6 +47,8 @@ export default function CompanyPage() {
     }
     
     function closeForm() {
+        setPaymentCounter(paymentCounter+1)
+        setCompanyCounter(companyCounter+1)
         setSelectedItem(null)
         setOpenForm(false)
         setEdit(false)
@@ -57,12 +59,14 @@ export default function CompanyPage() {
         <CompanyPaymentForm 
             dataUpdated={(res) => onCompletedForm()}
             dataInserted={(res) => onCompletedForm()}
+            closeForm={closeForm}
             data={selectedItem}
             isEdit={isEdit}
             isOpen={isOpenForm && tab=='payment'} />
         <CompanyForm  
             dataUpdated={(res) => onCompletedForm()}
             dataInserted={(res) => onCompletedForm()}
+            closeForm={closeForm}
             isOpen={isOpenForm && tab=='company'}
             isEdit={isEdit}
             data={selectedItem} />
@@ -80,7 +84,6 @@ export default function CompanyPage() {
                 <Tab title="Company" responsive>
                     <TableCompany 
                         isOpen={tab == 'company'}
-                        closeForm={closeForm}
                         counter={companyCounter}
                         onSelectItem={(item) => setSelectedItem(item)}
                         openEditForm={() => openEditForm()}
