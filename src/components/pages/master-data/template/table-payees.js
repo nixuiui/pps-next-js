@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { getLanguage } from '../../../../helpers/language';
 import SearchBar from "../../../widget/searchbar";
 import ReactPaginate from 'react-paginate';
-import { getListCompanyPaymentsSwr } from '../../../../services/swr/company-payment.swr';
+import { getListPayeesSwr } from '../../../../services/swr/payees.swr';
 import ReactHotkeys from 'react-hot-keys';
 import { ConfirmationModal } from '../../../widget/modal';
-import { deleteCompanyPaymentsApi } from '../../../../services/api/company-payment.api';
 import { dateFormatInput } from '../../../../helpers/general';
 import { Button } from '@paljs/ui';
+import { deletePayeeApi } from '../../../../services/api/payees.api';
 
-export default function TableCompany(props) {
+export default function TablePayees(props) {
 
     const lang = getLanguage()
 
@@ -39,7 +39,7 @@ export default function TableCompany(props) {
     const [isLoading, setLoading] = useState(false)
     const [dataList, setDataList] = useState([])
 
-    var listDataSwr = getListCompanyPaymentsSwr({
+    var listDataSwr = getListPayeesSwr({
         search: search, 
         page: page+1, 
         limit: limit,
@@ -90,7 +90,7 @@ export default function TableCompany(props) {
     }
     function deleteItem() {
         if(indexSelected > -1) {
-            deleteCompanyPaymentsApi(selectedItem()?._id)
+            deletePayeeApi(selectedItem()?._id)
             setOpenDeleteConfirmation(false)
             setIndexSelected(-1)
             dataList.splice(indexSelected, 1)
@@ -141,31 +141,41 @@ export default function TableCompany(props) {
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Client ID</th>
-                        <th>Bank Code</th>
-                        <th>Bank Name</th>
+                        <th>Payee ID</th>
+                        <th>Payee Name</th>
+                        <th>Bank's Code</th>
+                        <th>Bank's Name</th>
+                        <th>Branch Code</th>
+                        <th>Branch Name</th>
                         <th>Account Type</th>
+                        <th>Account Number</th>
                         <th>Account Holder</th>
-                        <th>Closing Date</th>
-                        <th>Regulated Amount</th>
+                        <th>Commission Fee</th>
+                        <th>Payment Date</th>
+                        <th>Payment Methods</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {(listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="8"><div className="text-center">Loading...</div></td></tr>}
-                    {(!listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="8"><div className="text-center">No Data</div></td></tr>}
+                    {(listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="13"><div className="text-center">Loading...</div></td></tr>}
+                    {(!listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="13"><div className="text-center">No Data</div></td></tr>}
                     {dataList.length > 0 && dataList?.map((item,i) => {
                         return <tr 
                         key={i} 
                         className={"cursor-pointer " + (indexSelected == i ? "selected" : "")} 
                         onClick={() => selectItem(i)}>
                             <td>{(page*limit) + i + 1}</td>
-                            <td>{item?.clientId}</td>
+                            <td>{item?.payeesID}</td>
+                            <td>{lang == 'en' ? item?.payeesName : item?.nameInKana}</td>
                             <td>{item?.bankCode}</td>
-                            <td>{item?.bankName}</td>
+                            <td>{lang == 'en' ? item?.bankName : item?.bankNameJa}</td>
+                            <td>{item?.branchCode}</td>
+                            <td>{lang == 'en' ? item?.branchName : item?.branchNameJa}</td>
                             <td>{item?.accountType}</td>
+                            <td>{item?.accountNumber}</td>
                             <td>{item?.accountHolder}</td>
-                            <td>{dateFormatInput(item?.closingDate)}</td>
-                            <td>{item?.regulatedAmount}</td>
+                            <td>{item?.comissionFee}</td>
+                            <td>{item?.paymentDate}</td>
+                            <td>{item?.paymentMethod}</td>
                         </tr>
                     })}
                 </tbody>

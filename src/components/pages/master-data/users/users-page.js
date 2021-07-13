@@ -159,7 +159,7 @@ export default function UsersPage() {
                     </div>
                     <SearchBar isLoading={listDataSwr?.isLoading} onSearch={(keyword) => searchData(keyword)} />
                 </div>
-                <div className=" table-responsive">
+                <div className="table-responsive">
                     <table className="table table-hover table-bordered">
                         <thead>
                             <tr>

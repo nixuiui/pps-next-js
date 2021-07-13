@@ -136,7 +136,7 @@ export default function TablePayment(props) {
             </div>
             <SearchBar isLoading={listDataSwr?.isLoading} onSearch={(keyword) => searchData(keyword)} />
         </div>
-        <div className=" table-responsive">
+        <div className="table-responsive">
             <table className="table table-bordered">
                 <thead>
                     <tr>

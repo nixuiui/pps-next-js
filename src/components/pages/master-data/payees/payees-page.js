@@ -159,7 +159,7 @@ export default function PayeesPage() {
                     </div>
                     <SearchBar isLoading={listDataSwr?.isLoading} onSearch={(keyword) => searchData(keyword)} />
                 </div>
-                <div className=" table-responsive">
+                <div className="table-responsive">
                     <table className="table table-bordered">
                         <thead>
                             <tr>
@@ -186,19 +186,19 @@ export default function PayeesPage() {
                                     key={i} 
                                     className={"cursor-pointer " + (indexSelected == i ? "selected" : "")} 
                                     onClick={() => selectItem(i)}>
-                                        <td>{(page*limit) + i + 1}</td>
-                                        <td>{item?.payeesID}</td>
-                                        <td>{lang == 'en' ? item?.payeesName : item?.nameInKana}</td>
-                                        <td>{item?.bankCode}</td>
-                                        <td>{lang == 'en' ? item?.bankName : item?.bankNameJa}</td>
-                                        <td>{item?.branchCode}</td>
-                                        <td>{lang == 'en' ? item?.branchName : item?.branchNameJa}</td>
-                                        <td>{item?.accountType}</td>
-                                        <td>{item?.accountNumber}</td>
-                                        <td>{item?.accountHolder}</td>
-                                        <td>{item?.comissionFee}</td>
-                                        <td>{item?.paymentDate}</td>
-                                        <td>{item?.paymentMethod}</td>
+                                    <td>{(page*limit) + i + 1}</td>
+                                    <td>{item?.payeesID}</td>
+                                    <td>{lang == 'en' ? item?.payeesName : item?.nameInKana}</td>
+                                    <td>{item?.bankCode}</td>
+                                    <td>{lang == 'en' ? item?.bankName : item?.bankNameJa}</td>
+                                    <td>{item?.branchCode}</td>
+                                    <td>{lang == 'en' ? item?.branchName : item?.branchNameJa}</td>
+                                    <td>{item?.accountType}</td>
+                                    <td>{item?.accountNumber}</td>
+                                    <td>{item?.accountHolder}</td>
+                                    <td>{item?.comissionFee}</td>
+                                    <td>{item?.paymentDate}</td>
+                                    <td>{item?.paymentMethod}</td>
                                 </tr>
                             })}
                         </tbody>

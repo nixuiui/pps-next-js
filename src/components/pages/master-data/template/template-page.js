@@ -2,6 +2,7 @@ import { Tabs, Tab } from '@paljs/ui/Tabs';
 import { useState } from 'react';
 import Layout from '../../../../Layouts/index';
 import TableCompany from './table-company';
+import TablePayees from './table-payees';
 
 export default function TemplatePage() {
     
@@ -37,13 +38,13 @@ export default function TemplatePage() {
                         /> */}
                 </Tab>
                 <Tab title="Payees" responsive>
-                    {/* <TableCompany 
+                    <TablePayees 
                         isOpen={tab == 'payees'}
                         counter={payeesCounter}
-                        onSelectItem={(item) => setSelectedItem(item)}
-                        openEditForm={() => openEditForm()}
-                        openForm={() => setOpenForm(true)}
-                        /> */}
+                        // onSelectItem={(item) => setSelectedItem(item)}
+                        // openEditForm={() => openEditForm()}
+                        // openForm={() => setOpenForm(true)}
+                        />
                 </Tab>
                 <Tab title="Company" responsive>
                     <TableCompany 

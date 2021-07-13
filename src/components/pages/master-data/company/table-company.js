@@ -151,7 +151,7 @@ export default function TableCompany(props) {
             </div>
             <SearchBar isLoading={listDataSwr?.isLoading} onSearch={(keyword) => searchData(keyword)} />
         </div>
-        <div className=" table-responsive">
+        <div className="table-responsive">
             <table className="table">
                 <tbody>
                     {(listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="3"><div className="text-center">Loading...</div></td></tr>}
