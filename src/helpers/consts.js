@@ -26,3 +26,7 @@ export const paymentMethodOptions = [
     {label: "Transfer", value: "transfer"},
     {label: "Cash", value: "cash"},
 ]
+export const comissionFeeOptions = [
+    {label: "Payee\'s Responsability", value: "payees_responsability"},
+    {label: "At your expense", value: "at_your_expense"},
+]

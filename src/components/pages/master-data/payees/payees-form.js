@@ -7,9 +7,9 @@ import { convertListToOptions } from '../../../../helpers/general';
 import { getCompaniesApi } from '../../../../services/api/master-data.api'
 import { getLanguage } from '../../../../helpers/language'
 import ReactHotkeys from 'react-hot-keys';
-import { paymentDateOptions, paymentMethodOptions, roles } from '../../../../helpers/consts';
+import { comissionFeeOptions, paymentDateOptions, paymentMethodOptions, roles } from '../../../../helpers/consts';
 import { acountTypeOptions } from '../../../../helpers/consts';
-import { insertPayeeApi, updatePayeeApi } from '../../../../services/api/payees.api';
+import { getPayeeId, insertPayeeApi, updatePayeeApi } from '../../../../services/api/payees.api';
 
 export default function PayeesForm(props) {
 
@@ -44,7 +44,6 @@ export default function PayeesForm(props) {
 
     useEffect(() => {
         if(props?.isEdit) {
-            console.log("EDIT")
             setFormState({
                 ...formState,
                 payeesID: props?.data?.payeesID,
@@ -68,7 +67,6 @@ export default function PayeesForm(props) {
                 isRegular: props?.data?.isRegular,
             })
         } else {
-            console.log("CREATE")
             setFormState({
                 ...formState,
                 payeesID: "",
@@ -91,8 +89,8 @@ export default function PayeesForm(props) {
                 remarks: "",
                 isRegular: "",
             })
+            getPayeeId().then(res => setFormState({...formState, payeesID: res}))
         }
-        console.log(formState)
     }, [props?.isOpen])
 
     const sendData = async () => {
@@ -153,6 +151,7 @@ export default function PayeesForm(props) {
                         <input 
                             type="text" 
                             name="payeesID"
+                            disabled={true}
                             value={formState?.payeesID}
                             onChange={(e) => onChangeInput(e)}
                             placeholder="" />
@@ -352,7 +351,7 @@ export default function PayeesForm(props) {
             </Row>
             <Row className="mb-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    Register as Regular {`${formState?.isRegular}`}
+                    Register as Regular
                 </Col>
                 <Col breakPoint={{ xs: 12, sm: 4 }}>
                     <Radio
@@ -381,18 +380,15 @@ export default function PayeesForm(props) {
                     <Radio
                         name="comissionFee"
                         onChange={(val) => setFormState({...formState, comissionFee: val})}
-                        options={[
-                        {
-                            value: 'Payee\'s Responsability',
-                            label: 'Payee\'s Responsability',
-                            checked: formState?.isRegular == 'Payee\'s Responsability',
-                        },
-                        {
-                            value: 'At your expense',
-                            label: 'At your expense',
-                            checked: formState?.isRegular == 'At your expense',
-                        },
-                        ]}
+                        options={
+                            comissionFeeOptions?.map(item => {
+                                return {
+                                    value: item?.value,
+                                    label: item?.label,
+                                    checked: formState?.isRegular == item?.value,
+                                }        
+                            })
+                        }
                     />
                 </Col>
             </Row>

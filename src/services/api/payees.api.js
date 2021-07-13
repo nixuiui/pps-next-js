@@ -32,6 +32,19 @@ export const getDetailPayeeApi = async (id) => {
     }
 };
 
+export const getPayeeId = async () => {
+    try {
+        const response = await requestApi({
+            url: `${process.env.NEXT_PUBLIC_REST_API_URL}/user/payees-id`,
+            method: 'GET',
+            isAuth: true
+        })
+        return response
+    } catch (err) {
+        throw err
+    }
+};
+
 export const insertPayeeApi = async (data) => {
     try {
         const response = await requestApi({

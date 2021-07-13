@@ -43,7 +43,6 @@ export default function UsersForm(props) {
 
     useEffect(() => {
         if(props?.isEdit) {
-            console.log("EDIT")
             setFormState({
                 ...formState,
                 userId: props?.data?.userId,
@@ -58,7 +57,6 @@ export default function UsersForm(props) {
                 role: roles?.find((val) => val?.value == props?.data?.role)
             })
         } else {
-            console.log("CREATE")
             setFormState({
                 ...formState,
                 userId: "",
@@ -73,7 +71,6 @@ export default function UsersForm(props) {
                 role: null
             })
         }
-        console.log(formState)
     }, [props?.isOpen])
 
     const sendData = async () => {
