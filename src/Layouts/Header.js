@@ -55,15 +55,14 @@ const SelectStyled = styled(Select)`
 const Header = (props) => {
   const router = useRouter();
 
-  const [lang, setLang] = React.useState(null);
-  React.useEffect(() => getLanguage(), null);
+  const lang = getLanguage()
 
   const languageOptions = () => [
     {
       value: 'en',
       label: (
         <Label>
-          <img src="/assets/images/flag-english.png" width={20} />
+          <img src="/assets/images/flag-english.png" width={20} className="me-2" />
           English
         </Label>
       ),
@@ -72,7 +71,7 @@ const Header = (props) => {
       value: 'jp',
       label: (
         <Label>
-          <img src="/assets/images/flag-japan.png" width={20} />
+          <img src="/assets/images/flag-japan.png" width={20} className="me-2" />
           Japan
         </Label>
       ),
@@ -146,7 +145,7 @@ const Header = (props) => {
                   instanceId="react-select-input"
                   isSearchable={false}
                   shape="SemiRound"
-                  placeholder="Language"
+                  placeholder="Languages"
                   value={languageOptions().find((item) => item.value === lang)}
                   options={languageOptions()}
                   onChange={({ value }) => setLanguage(value)}
