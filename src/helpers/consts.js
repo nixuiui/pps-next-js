@@ -18,3 +18,11 @@ export const acountTypeOptions = [
     {label: "Free", value: "free"},
     {label: "Premium", value: "premium"},
 ]
+export const paymentDateOptions = [
+    {label: "Tomorrow", value: "tomorrow"},
+    {label: "On The day", value: "onTheDay"},
+]
+export const paymentMethodOptions = [
+    {label: "Transfer", value: "transfer"},
+    {label: "Cash", value: "cash"},
+]

@@ -34,7 +34,7 @@ export default function UsersPage() {
     
     const [isLoading, setLoading] = useState(false)
     const [dataList, setDataList] = useState([])
-    var listUserSwr = getListUsersSwr({
+    var listDataSwr = getListUsersSwr({
         search: search, 
         page: page+1, 
         limit: limit,
@@ -42,12 +42,12 @@ export default function UsersPage() {
         sortBy: "",
     })
     useEffect(() => {
-        setLoading(listUserSwr?.isLoading)
-        if(listUserSwr?.data?.data) {
-            setTotal(listUserSwr?.data?.totalAll)
-            setDataList([...listUserSwr?.data?.data])
+        setLoading(listDataSwr?.isLoading)
+        if(listDataSwr?.data?.data) {
+            setTotal(listDataSwr?.data?.totalAll)
+            setDataList([...listDataSwr?.data?.data])
         }
-    }, [listUserSwr?.data])
+    }, [listDataSwr?.data])
     // ------------------------------------------
     // [END] GET DATA & PAGINATION
     // ==========================================
@@ -58,7 +58,7 @@ export default function UsersPage() {
     
     function onCompletedForm() {
         closeForm()
-        listUserSwr.mutate()
+        listDataSwr.mutate()
     }
     
     function closeForm() {
@@ -157,7 +157,7 @@ export default function UsersPage() {
                             Delete (SF10)
                         </Button>
                     </div>
-                    <SearchBar isLoading={listUserSwr?.isLoading} onSearch={(keyword) => searchData(keyword)} />
+                    <SearchBar isLoading={listDataSwr?.isLoading} onSearch={(keyword) => searchData(keyword)} />
                 </div>
                 <div className=" table-responsive">
                     <table className="table table-hover table-bordered">
@@ -176,8 +176,8 @@ export default function UsersPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {(listUserSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="10"><div className="text-center">Loading...</div></td></tr>}
-                            {(!listUserSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="10"><div className="text-center">No Data</div></td></tr>}
+                            {(listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="10"><div className="text-center">Loading...</div></td></tr>}
+                            {(!listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="10"><div className="text-center">No Data</div></td></tr>}
                             {dataList.length > 0 && dataList?.map((item,i) => {
                                 return <tr 
                                     key={i} 
