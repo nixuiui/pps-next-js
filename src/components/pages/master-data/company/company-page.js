@@ -55,7 +55,7 @@ export default function CompanyPage() {
     }
     // --------------<FROM>--------------
 
-    return <Layout title="Users">
+    return <Layout title="Company">
         <CompanyPaymentForm 
             dataUpdated={(res) => onCompletedForm()}
             dataInserted={(res) => onCompletedForm()}

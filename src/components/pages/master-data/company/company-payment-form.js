@@ -1,4 +1,4 @@
-import { Row, Col, Button, Spinner } from '@paljs/ui';
+import { Row, Col, Button, Spinner, Alert } from '@paljs/ui';
 import Select from '@paljs/ui/Select';
 import { InputGroup } from '@paljs/ui';
 import { useEffect, useState } from 'react';
@@ -302,7 +302,7 @@ export default function CompanyPaymentForm(props) {
                 <Col breakPoint={{ xs: 12, md: 4 }}>
                     <InputGroup fullWidth size="Small">
                         <input 
-                            type="text" 
+                            type="number" 
                             name="regulatedAmount"
                             value={formState?.regulatedAmount}
                             onChange={(e) => onChangeInput(e)}
@@ -310,6 +310,14 @@ export default function CompanyPaymentForm(props) {
                     </InputGroup>
                 </Col>
             </Row>
+            {errorText?.error}
+            {errorText?.error != null && <Row className="mb-3 mt-5">
+                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
+                </Col>
+                <Col breakPoint={{ xs: 12, md: 4 }}>
+                    <Alert status="Danger">{errorText?.error}</Alert>
+                </Col>
+            </Row>}
             <Row className="mb-3 mt-5">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
                 </Col>
