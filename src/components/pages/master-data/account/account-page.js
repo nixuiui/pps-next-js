@@ -9,6 +9,7 @@ import { getLanguage } from '../../../../helpers/language';
 import { getListAccountSwr } from '../../../../services/swr/account-data.swr';
 import { deleteAccountApi } from '../../../../services/api/account-data.api';
 import ReactHotkeys from 'react-hot-keys';
+import AccountForm from './account-form';
 
 export default function AccountPage() {
 
@@ -213,25 +214,36 @@ export default function AccountPage() {
                                 <th>Account Credit</th>
                                 <th>Tax</th>
                                 <th>Tax Category</th>
+                                <th>Tax</th>
+                                <th>Tax Category</th>
                                 <th>Debit Useage Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {(listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="13"><div className="text-center">Loading...</div></td></tr>}
-                            {(!listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="13"><div className="text-center">No Data</div></td></tr>}
+                            <AccountForm 
+                                isOpen={isOpenForm}
+                                isEdit={isEdit}
+                                closeForm={closeForm}
+                                dataUpdated={(res) => onCompletedForm()}
+                                dataInserted={(res) => onCompletedForm()}
+                                data={selectedItem()} />
+                            {(listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="10"><div className="text-center">Loading...</div></td></tr>}
+                            {(!listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="10"><div className="text-center">No Data</div></td></tr>}
                             {dataList.length > 0 && dataList?.map((item,i) => {
                                 return <tr 
                                     key={i} 
                                     className={"cursor-pointer " + (indexSelected == i ? "selected" : "")} 
                                     onClick={() => selectItem(i)}>
                                     <td>{(page*limit) + i + 1}</td>
-                                    <td>{item?.accountCode}</td>
-                                    <td>{item?.name}</td>
-                                    <td>{item?.accountKey}</td>
-                                    <td>{item?.accountCredit}</td>
-                                    <td>{item?.tax1}</td>
-                                    <td>{item?.tax2}</td>
-                                    <td>{item?.debitUsageStatus}</td>
+                                    <td width={150}>{item?.accountCode}</td>
+                                    <td width={150}>{item?.name}</td>
+                                    <td width={150}>{item?.accountKey}</td>
+                                    <td width={150}>{item?.accountCredit}</td>
+                                    <td width={150}>{item?.tax1}</td>
+                                    <td width={150}>{item?.taxCategory1}</td>
+                                    <td width={150}>{item?.tax2}</td>
+                                    <td width={150}>{item?.taxCategory2}</td>
+                                    <td width={150}>{item?.debitUsageStatus}</td>
                                 </tr>
                             })}
                         </tbody>

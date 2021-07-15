@@ -30,3 +30,8 @@ export const comissionFeeOptions = [
     {label: "Payee\'s Responsability", value: "payees_responsability"},
     {label: "At your expense", value: "at_your_expense"},
 ]
+export const debitUsageStatusOptions = [
+    {label: "In Use", value: "is_use"},
+    {label: "Option 2", value: "option_2"},
+    {label: "Option 3", value: "option_3"},
+]
