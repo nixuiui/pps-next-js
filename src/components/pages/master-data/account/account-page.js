@@ -220,16 +220,25 @@ export default function AccountPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            <AccountForm 
+                            {(isOpenForm && !isEdit) && <AccountForm 
                                 isOpen={isOpenForm}
                                 isEdit={isEdit}
                                 closeForm={closeForm}
                                 dataUpdated={(res) => onCompletedForm()}
                                 dataInserted={(res) => onCompletedForm()}
-                                data={selectedItem()} />
+                                data={selectedItem()} />}
                             {(listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="10"><div className="text-center">Loading...</div></td></tr>}
                             {(!listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="10"><div className="text-center">No Data</div></td></tr>}
                             {dataList.length > 0 && dataList?.map((item,i) => {
+                                if(isOpenForm && isEdit && indexSelected == i) {
+                                    return <AccountForm 
+                                        isOpen={isOpenForm}
+                                        isEdit={isEdit}
+                                        closeForm={closeForm}
+                                        dataUpdated={(res) => onCompletedForm()}
+                                        dataInserted={(res) => onCompletedForm()}
+                                        data={selectedItem()} />
+                                }
                                 return <tr 
                                     key={i} 
                                     className={"cursor-pointer " + (indexSelected == i ? "selected" : "")} 
