@@ -10,6 +10,7 @@ export default function getRoute(name, query) {
 
 export const routerList = [
     { name: "home",                     path: "/" },
+    { name: "profile",                  path: "/profile" },
 
     // ---------------------<AUTH>---------------------
     { name: "auth.login",               path: "/auth/login" },

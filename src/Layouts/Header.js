@@ -166,11 +166,10 @@ const Header = (props) => {
                   placement="bottom"
                   currentPath={router.pathname}
                   items={[
-                    { title: language().menu.profile, link: { href: '/modal-overlays/tooltip' } },
+                    { title: language().menu.profile, link: { href: getRoute('profile') } },
                     { title: language().menu.logout, link: { href: getRoute('auth.logout') } },
                   ]}
-                  Link={Link}
-                >
+                  Link={Link}>
                   <User image="url('/icons/icon-72x72.png')" name={account?.data?.name} title={account?.data?.role} size="Medium" />
                 </ContextMenu>
               ),
