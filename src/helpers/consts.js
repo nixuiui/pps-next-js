@@ -35,3 +35,7 @@ export const debitUsageStatusOptions = [
     {label: "Option 2", value: "option_2"},
     {label: "Option 3", value: "option_3"},
 ]
+export const offsetAccountOptions = [
+    {label: "Offset Account 1", value: "offset_account_1"},
+    {label: "Offset Account 2", value: "offset_account_2"},
+]

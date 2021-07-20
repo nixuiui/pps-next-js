@@ -144,7 +144,7 @@ export default function PayeesForm(props) {
             </div>
             <Row className="mb-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                    User ID
+                    Payee ID
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>
                     <InputGroup fullWidth size="Small">
