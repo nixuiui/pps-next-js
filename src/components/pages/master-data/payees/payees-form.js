@@ -115,7 +115,7 @@ export default function PayeesForm(props) {
             remarks: formState?.remarks,
             isRegular: formState?.isRegular,
         }
-        console.log(formData)
+        setErrorText(null)
         try {
             setLoading(true)
             if(props?.isEdit) {
@@ -130,7 +130,6 @@ export default function PayeesForm(props) {
             console.log(err)
             setErrorText({...errorText, error: err})
         }
-        setErrorText(null)
         setLoading(false)
     }
 
@@ -142,6 +141,11 @@ export default function PayeesForm(props) {
             <div className="mb-5">
                 <h5 className="m-0">Payees Form</h5>
             </div>
+            {errorText?.error && <Row className="">
+                <Col breakPoint={{ xs: 12, md: 12 }}>
+                    <Alert status="Danger">{errorText?.error}</Alert>
+                </Col>
+            </Row>}
             <Row className="mb-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
                     Payee ID
@@ -422,14 +426,7 @@ export default function PayeesForm(props) {
                     </InputGroup>
                 </Col>
             </Row>
-            {errorText?.error && <Row className="mb-3 mt-5">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <Alert status="Danger">{errorText?.error}</Alert>
-                </Col>
-            </Row>}
-            <Row className="mb-3 mt-5">
+            <Row className="mb-3 mt-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>

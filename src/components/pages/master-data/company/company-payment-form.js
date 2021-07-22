@@ -96,6 +96,7 @@ export default function CompanyPaymentForm(props) {
             closingDate: formState?.closingDate,
             regulatedAmount: formState?.regulatedAmount,
         }
+        setErrorText(null)
         try {
             setLoading(true)
             if(props?.isEdit) {
@@ -110,7 +111,6 @@ export default function CompanyPaymentForm(props) {
             console.log(err)
             setErrorText({...errorText, error: err})
         }
-        setErrorText(null)
         setLoading(false)
     }
 
@@ -122,6 +122,11 @@ export default function CompanyPaymentForm(props) {
             <div className="mb-5">
                 <h5 className="m-0">Company Payment Form</h5>
             </div>
+            {errorText?.error && <Row className="">
+                <Col breakPoint={{ xs: 12, md: 12 }}>
+                    <Alert status="Danger">{errorText?.error}</Alert>
+                </Col>
+            </Row>}
             <Row className="mb-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
                     Company
@@ -318,7 +323,7 @@ export default function CompanyPaymentForm(props) {
                     <Alert status="Danger">{errorText?.error}</Alert>
                 </Col>
             </Row>}
-            <Row className="mb-3 mt-5">
+            <Row className="mb-3 mt-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>

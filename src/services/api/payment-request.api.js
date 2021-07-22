@@ -46,6 +46,20 @@ export const insertPaymentRequestApi = async (data) => {
     }
 };
 
+export const insertPaymentRequestAsTemplateApi = async (data) => {
+    try {
+        const response = await requestApi({
+            url: `${process.env.NEXT_PUBLIC_REST_API_URL}/user/payment-request-template`,
+            method: 'POST',
+            body: data,
+            isAuth: true
+        })
+        return response
+    } catch (err) {
+        throw err
+    }
+};
+
 export const updatePaymentRequestApi = async (data, id) => {
     try {
         const response = await requestApi({

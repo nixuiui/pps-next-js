@@ -9,9 +9,10 @@ import { getLanguage } from '../../../../helpers/language'
 import ReactHotkeys from 'react-hot-keys';
 import { comissionFeeOptions, offsetAccountOptions, paymentDateOptions, paymentMethodOptions, roles } from '../../../../helpers/consts';
 import { acountTypeOptions } from '../../../../helpers/consts';
-import { getInvoiceNumber, insertPaymentRequestApi, updatePaymentRequestApi } from '../../../../services/api/payment-request.api';
+import { getInvoiceNumber, insertPaymentRequestApi, insertPaymentRequestAsTemplateApi, updatePaymentRequestApi } from '../../../../services/api/payment-request.api';
 import SelectCustom from '../../../widget/select-custom';
 import { getListPayeesSwr } from '../../../../services/swr/payees.swr';
+import { ConfirmationModal } from '../../../widget/modal';
 
 export default function InputDataForm(props) {
 
@@ -23,6 +24,45 @@ export default function InputDataForm(props) {
         else if(e.key == 'F12') closeForm()
     }
     // --------------<ACTION>--------------
+
+    const [isOpenConfirmationModal, setOpenConfirmationModal] = useState(false)
+    const [titleConfirmationModal, setTitleConfirmationModal] = useState("")
+    const [subtitleConfirmationModal, setSubtitleConfirmationModal] = useState("")
+    const [keyConfirmationModal, setKeyConfirmationModal] = useState("")
+    
+    function openConfirmationModal(title, subtitle, key) {
+        setOpenConfirmationModal(true)
+        setTitleConfirmationModal(title)
+        setSubtitleConfirmationModal(subtitle)
+        setKeyConfirmationModal(key)
+    }
+    
+    function closeConfirmationModal() {
+        if(keyConfirmationModal == "saveAsTemplate") {
+            props?.dataInserted()
+        } else if(keyConfirmationModal == "duplicatedData") {
+
+        }
+
+        setOpenConfirmationModal(false)
+        setTitleConfirmationModal("")
+        setSubtitleConfirmationModal("")
+        setKeyConfirmationModal("")
+    }
+
+    const handleConfirmationModal = async () => {
+        if(key == "saveAsTemplate") {
+            var res = await insertPaymentRequestAsTemplateApi(formData)
+            props?.dataInserted(res)
+        } else if(key == "duplicatedData") {
+
+        }
+
+        setOpenConfirmationModal(false)
+        setTitleConfirmationModal("")
+        setSubtitleConfirmationModal("")
+        setKeyConfirmationModal("")
+    }
 
     function closeForm() {
         setFormState(null)
@@ -113,43 +153,45 @@ export default function InputDataForm(props) {
             getInvoiceNumber().then(res => setFormState({...formState, invoiceNumber: res}))
         }
     }, [props?.isOpen])
-
+    
+    const [formData, setFormData] = useState(null)
     const sendData = async () => {
-        var formData = {
+        var formBody = {
             invoiceNumber: formState?.invoiceNumber,
             paymentDate: formState?.paymentDate,
             payee: formState?.payee?.value?._id,
-            amount: formState?.amount,
+            amount: parseFloat(formState?.amount),
             offsetAccount: formState?.offsetAccount?.value,
-            commisionFee: formState?.commisionFee,
-            fees: formState?.fees,
+            commisionFee: parseFloat(formState?.commisionFee),
+            fees: parseFloat(formState?.fees),
             bankName: formState?.bankName,
             branchName: formState?.branchName,
             paymentTerms: formState?.paymentTerms,
             remarks: formState?.remarks,
-            paymentAmount: formState?.paymentAmount,
+            paymentAmount: parseFloat(formState?.paymentAmount),
             paymentMethod: formState?.paymentMethod?.value,
-            offsetAmount: formState?.offsetAmount,
+            offsetAmount: parseFloat(formState?.offsetAmount),
             billSettlementDate: formState?.billSettlementDate,
             accountType: formState?.accountType,
             accountNumber: formState?.accountNumber,
         }
-        console.log(formData)
+        setFormData(formBody)
+        setErrorText(null)
         try {
             setLoading(true)
             if(props?.isEdit) {
-                var res = await updatePaymentRequestApi(formData, props?.data?._id)
+                var res = await updatePaymentRequestApi(formBody, props?.data?._id)
                 props?.dataUpdated(res)
             } else {
-                var res = await insertPaymentRequestApi(formData)
-                props?.dataInserted(res)
+                var res = await insertPaymentRequestApi(formBody)
+                openConfirmationModal("", "Do you want to save this transaction as template?", "saveAsTemplate")
             }
             setFormState({})
         } catch(err) {
             console.log(err)
             setErrorText({...errorText, error: err})
+            console.log(errorText)
         }
-        setErrorText(null)
         setLoading(false)
     }
 
@@ -157,10 +199,21 @@ export default function InputDataForm(props) {
         keyName="F1, F12"
         onKeyDown={handleKeyDown}>
         {isLoading && <Spinner>Loading...</Spinner>}
+        <ConfirmationModal 
+            isOpen={isOpenConfirmationModal}
+            title={titleConfirmationModal}
+            description={subtitleConfirmationModal}
+            cancel={closeConfirmationModal}
+            confirm={handleConfirmationModal} />
         <div className="card mb-5" style={{ display: props?.isOpen ? "block" : "none" }}>
             <div className="mb-5">
                 <h5 className="m-0">Input Payment Data Form</h5>
             </div>
+            {errorText?.error && <Row className="">
+                <Col breakPoint={{ xs: 12, md: 12 }}>
+                    <Alert status="Danger">{errorText?.error}</Alert>
+                </Col>
+            </Row>}
             <Row>
                 <Col breakPoint={{ xs: 12, md: 5 }}>
                     <Row className="mb-3">
@@ -474,14 +527,7 @@ export default function InputDataForm(props) {
                     </Row>
                 </Col>
             </Row>
-            {errorText?.error && <Row className="mb-3 mt-5">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <Alert status="Danger">{errorText?.error}</Alert>
-                </Col>
-            </Row>}
-            <Row className="mt-5">
+            <Row className="mt-3">
                 <Col breakPoint={{ xs: 12, md: 12 }}>
                     <Button 
                         status="Primary" 

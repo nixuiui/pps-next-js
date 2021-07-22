@@ -87,6 +87,7 @@ export default function UsersForm(props) {
             company: formState?.company?.value?._id,
             role: formState?.role?.value,
         }
+        setErrorText(null)
         try {
             setLoading(true)
             if(props?.isEdit) {
@@ -101,7 +102,6 @@ export default function UsersForm(props) {
             console.log(err)
             setErrorText({...errorText, error: err})
         }
-        setErrorText(null)
         setLoading(false)
     }
 
@@ -113,6 +113,11 @@ export default function UsersForm(props) {
             <div className="mb-5">
                 <h5 className="m-0">User Form</h5>
             </div>
+            {errorText?.error && <Row className="">
+                <Col breakPoint={{ xs: 12, md: 12 }}>
+                    <Alert status="Danger">{errorText?.error}</Alert>
+                </Col>
+            </Row>}
             <Row className="mb-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
                     User ID
@@ -274,14 +279,7 @@ export default function UsersForm(props) {
                     </InputGroup>
                 </Col>
             </Row>
-            {errorText?.error && <Row className="mb-3 mt-5">
-                <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
-                </Col>
-                <Col breakPoint={{ xs: 12, md: 4 }}>
-                    <Alert status="Danger">{errorText?.error}</Alert>
-                </Col>
-            </Row>}
-            <Row className="mb-3 mt-5">
+            <Row className="mb-3 mt-3">
                 <Col breakPoint={{ xs: 12, md: 3 }} className="text-right flex-center-end">
                 </Col>
                 <Col breakPoint={{ xs: 12, md: 4 }}>

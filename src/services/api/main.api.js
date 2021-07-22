@@ -34,6 +34,8 @@ const requestApi = async (param) => {
             throw data.message
         } else if (response.status == 404) {
             throw "Source Not Found"
+        } else if (response.status == 500) {
+            throw data.message ?? "Server Failed"
         } else {
             throw "Failed"
         }
