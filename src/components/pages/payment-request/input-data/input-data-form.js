@@ -52,8 +52,7 @@ export default function InputDataForm(props) {
 
     const handleConfirmationModal = async () => {
         if(key == "saveAsTemplate") {
-            var res = await insertPaymentRequestAsTemplateApi(formData)
-            props?.dataInserted(res)
+            saveAsTemplate()
         } else if(key == "duplicatedData") {
 
         }
@@ -62,6 +61,18 @@ export default function InputDataForm(props) {
         setTitleConfirmationModal("")
         setSubtitleConfirmationModal("")
         setKeyConfirmationModal("")
+    }
+
+    const saveAsTemplate = async () => {
+        try {
+            setLoading(true)
+            var res = await insertPaymentRequestAsTemplateApi(formData)
+            props?.dataInserted(res)
+        } catch(err) {
+            console.log(err)
+            setErrorText({...errorText, error: err})
+        }
+        setLoading(false)
     }
 
     function closeForm() {
