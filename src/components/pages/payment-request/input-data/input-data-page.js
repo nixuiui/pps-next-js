@@ -130,7 +130,7 @@ export default function InputDataPage() {
                 cancel={() => setOpenDeleteConfirmation(false)}
                 confirm={() => deleteItem()} />
             <div className="card mb-5">
-            <h5 className="m-0 mb-4">Input Payment Data</h5>
+                <h5 className="m-0 mb-4">Input Payment Data</h5>
                 <div className="display-space-between mb-3">
                     <div className="flex-center">
                         <Button 

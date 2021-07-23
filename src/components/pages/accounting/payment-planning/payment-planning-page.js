@@ -112,46 +112,96 @@ export default function PaymentPlanningPage() {
     }
     // --------------<ACTION>--------------
 
-    return <Layout title="Users">
-        <PaymentPlanningForm />
-        <div className="card mb-5">
-            <div className="display-space-between mb-5">
-                <h5 className="m-0">List of Payment Planning</h5>
-                <SearchBar />
+    return <ReactHotkeys
+        keyName="F9,F10,shift+F10" 
+        onKeyDown={handleKeyDown}>
+        <Layout title="Users">
+            <PaymentPlanningForm 
+                isOpen={isOpenForm}
+                isEdit={isEdit}
+                closeForm={closeForm}
+                dataUpdated={(res) => onCompletedForm()}
+                dataInserted={(res) => onCompletedForm()}
+                data={selectedItem()} />
+            <ConfirmationModal 
+                isOpen={isOpenDeleteConfirmation}
+                title="Delete Item"
+                description="Do you want to delete this item?"
+                cancel={() => setOpenDeleteConfirmation(false)}
+                confirm={() => deleteItem()} />
+            <div className="card mb-5">
+                <h5 className="m-0 mb-4">List of Payment Planning</h5>
+                <div className="display-space-between mb-3">
+                    <div className="flex-center">
+                        <Button 
+                            status="Primary" 
+                            size="Small"
+                            className="me-3"
+                            onClick={() => setOpenForm(true)}>
+                            Create (F9)
+                        </Button>
+                        <Button 
+                            status="Basic" 
+                            size="Small"
+                            className="me-3"
+                            disabled={indexSelected < 0}
+                            onClick={() => openEditForm(true)}>
+                            Update (F10)
+                        </Button>
+                        <Button 
+                            status="Basic" 
+                            size="Small"
+                            className="me-3"
+                            disabled={indexSelected < 0}
+                            onClick={() => confirmationDelete(true)}>
+                            Delete (SF10)
+                        </Button>
+                    </div>
+                    <SearchBar isLoading={listDataSwr?.isLoading} onSearch={(keyword) => searchData(keyword)} />
+                </div>
+                <div className="table-responsive">
+                    <table className="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Debit Account</th>
+                                <th>Amount</th>
+                                <th>Credit Account</th>
+                                <th>Auxiliary Account</th>
+                                <th>Amount</th>
+                                <th>Billing Date</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {(listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="9"><div className="text-center">Loading...</div></td></tr>}
+                            {(!listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="9"><div className="text-center">No Data</div></td></tr>}
+                            {dataList.length > 0 && dataList?.map((item,i) => {
+                                return <tr 
+                                    key={i} 
+                                    className={"cursor-pointer " + (indexSelected == i ? "selected" : "")} 
+                                    onClick={() => selectItem(i)}>
+                                    <td>{(page*limit) + i + 1}</td>
+                                    <td>{item?.payee?.payeesID}</td>
+                                    <td>{lang == 'en' ? item?.payee?.payeesName : item?.payee?.nameInKana}</td>
+                                    <td>{item?.amount}</td>
+                                    <td>{item?.paymentMethod}</td>
+                                    <td>{item?.bankName}</td>
+                                    <td>{item?.branchName}</td>
+                                    <td>{item?.accountNumber}</td>
+                                </tr>
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="pagination mt-3">
+                    <ReactPaginate 
+                        initialPage={page}
+                        disableInitialCallback={true}
+                        onPageChange={(val) => changePage(val?.selected)}
+                        pageCount={total / limit}/>
+                </div>
             </div>
-            <table className="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Debit Account</th>
-                        <th>Amount</th>
-                        <th>Credit Account</th>
-                        <th>Auxiliary Account</th>
-                        <th>Amount</th>
-                        <th>Billing Date</th>
-                        <th>Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {(listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="9"><div className="text-center">Loading...</div></td></tr>}
-                    {(!listDataSwr?.isLoading && dataList.length <= 0) && <tr><td colSpan="9"><div className="text-center">No Data</div></td></tr>}
-                    {dataList.length > 0 && dataList?.map((item,i) => {
-                        return <tr 
-                            key={i} 
-                            className={"cursor-pointer " + (indexSelected == i ? "selected" : "")} 
-                            onClick={() => selectItem(i)}>
-                            <td>{(page*limit) + i + 1}</td>
-                            <td>{item?.payee?.payeesID}</td>
-                            <td>{lang == 'en' ? item?.payee?.payeesName : item?.payee?.nameInKana}</td>
-                            <td>{item?.amount}</td>
-                            <td>{item?.paymentMethod}</td>
-                            <td>{item?.bankName}</td>
-                            <td>{item?.branchName}</td>
-                            <td>{item?.accountNumber}</td>
-                        </tr>
-                    })}
-                </tbody>
-            </table>
-        </div>
-    </Layout>
+        </Layout>
+    </ReactHotkeys>
 }

@@ -4,11 +4,9 @@ import Select from '@paljs/ui/Select';
 import { InputGroup, Radio } from '@paljs/ui';
 import { useEffect, useState } from 'react';
 import { convertListToOptions, dateFormatInput } from '../../../../helpers/general';
-import { getCompaniesApi } from '../../../../services/api/master-data.api'
 import { getLanguage } from '../../../../helpers/language'
 import ReactHotkeys from 'react-hot-keys';
-import { comissionFeeOptions, offsetAccountOptions, paymentDateOptions, paymentMethodOptions, roles } from '../../../../helpers/consts';
-import { acountTypeOptions } from '../../../../helpers/consts';
+import { offsetAccountOptions, paymentMethodOptions, roles } from '../../../../helpers/consts';
 import { getInvoiceNumber, insertPaymentRequestApi, insertPaymentRequestAsTemplateApi, updatePaymentRequestApi } from '../../../../services/api/payment-request.api';
 import SelectCustom from '../../../widget/select-custom';
 import { getListPayeesSwr } from '../../../../services/swr/payees.swr';
