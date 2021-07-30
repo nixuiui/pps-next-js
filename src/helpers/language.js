@@ -63,6 +63,18 @@ const en = {
     sentence: {
         backToLogin: "Back To Login",
         rememberMe: "Remember Me",
+        loading: "Loading",
+    },
+    validation: {
+        userId: {
+            notEmpty: "UserId can't be empty",
+        },
+        password: {
+            notEmpty: "Password can't be empty",
+        },
+        company: {
+            notEmpty: "Company can't be empty",
+        },
     }
 }
 

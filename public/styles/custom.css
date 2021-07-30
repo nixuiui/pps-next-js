@@ -399,6 +399,9 @@
     padding-right: 0.5em;
 }
 
+.text-error {
+    color: red;
+}
 .text-center {
     text-align: center !important;
 }

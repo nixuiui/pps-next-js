@@ -21,6 +21,7 @@ export default function Index() {
   var router = useRouter()
 
   const lang = getLanguage()
+  const languageText = language()
 
   const [companies, setCompanies] = useState([])
   useEffect(() => {
@@ -35,20 +36,26 @@ export default function Index() {
   const [errorText, setErrorText] = useState(null)
   function onChangeInput(e) {
       setFormState({...formState, [e.target.name]: e.target.value})
+      setErrorText({...errorText, [e.target.name]: null})
   }
 
   function checkValidation() {
     var isValid = true
     setErrorText(null)
     
+    if(formState?.company == null || formState?.company == "") {
+      isValid = false
+      setErrorText({...errorText, company: languageText.validation.company.notEmpty})
+    }
+    
     if(formState?.userId == null || formState?.userId == "") {
       isValid = false
-      setErrorText({...errorText, userId: "User Id harus diisi"})
+      setErrorText({...errorText, userId: languageText.validation.userId.notEmpty})
     }
     
     if(formState?.password == null || formState?.password == "") {
       isValid = false
-      setErrorText({...errorText, password: "Password harus diisi"})
+      setErrorText({...errorText, password: languageText.validation.password.notEmpty})
     }
 
     return isValid
@@ -74,36 +81,53 @@ export default function Index() {
   }
 
   return (
-    <Layout title={language().menu.login}>
-      <Auth title={language().menu.login}>
+    <Layout title={languageText.menu.login}>
+      <Auth title={languageText.menu.login}>
         {errorText?.error && <Alert status="Danger">{errorText?.error}</Alert>}
         <form>
-          <Select 
-            size="Medium" 
-            options={companies}
-            name="company"
-            onChange={(val) => setFormState({...formState, company: val?.value})}
-            placeholder={language().placeholder.companyName} />
-          <InputGroup fullWidth size="Medium">
-            <input 
-              type="text" 
-              name="userId"
-              onChange={(e) => onChangeInput(e)}
-              placeholder={language().placeholder.userId} />
-          </InputGroup>
-          <InputGroup fullWidth size="Medium">
-            <input 
-              type="password"
-              name="password" 
-              onChange={(e) => onChangeInput(e)}
-              placeholder={language().placeholder.password} />
-          </InputGroup>
+          <div className="mb-5">
+            <Select 
+              size="Medium" 
+              options={companies}
+              name="company"
+              onChange={(val) => setFormState({...formState, company: val?.value})}
+              placeholder={languageText.placeholder.companyName} />
+            {errorText?.company && <div className="text-error">{errorText?.company}</div>}
+          </div>
+          <div className="mb-5">
+            <InputGroup 
+              fullWidth 
+              size="Medium" 
+              className="mb-0"
+              status={errorText?.userId != null ? "Danger" : "Basic"}>
+              <input 
+                type="text" 
+                name="userId"
+                onChange={(e) => onChangeInput(e)}
+                placeholder={languageText.placeholder.userId} />
+            </InputGroup>
+            {errorText?.userId && <div className="text-error">{errorText?.userId}</div>}
+          </div>
+          <div className="mb-5">
+            <InputGroup 
+              fullWidth 
+              size="Medium" 
+              status={errorText?.userId != null ? "Danger" : "Basic"}>
+              <input 
+                type="password"
+                name="password" 
+                onChange={(e) => onChangeInput(e)}
+                errorText={errorText?.password}
+                placeholder={languageText.placeholder.password} />
+            </InputGroup>
+            {errorText?.password && <div className="text-error">{errorText?.password}</div>}
+          </div>
           <Group>
             <Checkbox checked>
-                {language().sentence.rememberMe}
+                {languageText.sentence.rememberMe}
             </Checkbox>
             <Link href={getRoute("auth.forgot.password")}>
-              <a>{language().menu.forgotPassword}?</a>
+              <a>{languageText.menu.forgotPassword}?</a>
             </Link>
           </Group>
           <Button 
@@ -113,8 +137,8 @@ export default function Index() {
             fullWidth
             style={{ position: 'relative' }}
             onClick={login}>
-            {!isLoading && language().menu.login}
-            {isLoading && <Spinner size="Medium">Loading...</Spinner>}
+            {!isLoading && languageText.menu.login}
+            {isLoading && <Spinner size="Medium">{languageText.sentence.loading}...</Spinner>}
           </Button>
         </form>
       </Auth>
