@@ -1,6 +1,6 @@
 import { Button, Col, Row } from '@paljs/ui';
 import { useEffect, useState } from 'react';
-import { getLanguage } from '../../../helpers/language';
+import { getLanguage, language } from '../../../helpers/language';
 import Layout from '../../../Layouts/index';
 import { getAccountSwr } from '../../../services/swr/account.swr';
 import ProfileEditForm from './profile-edit-form';
@@ -9,6 +9,7 @@ import ProfilePasswordForm from './profile-password-form';
 export default function ProfilePage() {
 
     const lang = getLanguage()
+    const languageText = language()
 
     const [isEditPassword, setEditPassword] = useState(false)
     const [isEditProfile, setEditProfile] = useState(false)
@@ -30,30 +31,30 @@ export default function ProfilePage() {
                     closeForm={() => setEditPassword(false)}
                     isOpen={isEditPassword} />
                 <div className="card mb-5">
-                    <h5 className="m-0 mb-4">Profile</h5>
+                    <h5 className="m-0 mb-4">{languageText.title.profile}</h5>
                     <div>
                         <div className="mb-3">
-                            <small>Name</small> <br />
+                            <small>{languageText.label.name}</small> <br />
                             <strong>{lang == 'en' ? account?.data?.name : account?.data?.nameInKana}</strong>
                         </div>
                         <div className="mb-3">
-                            <small>Role</small> <br />
+                            <small>{languageText.label.role}</small> <br />
                             <strong>{account?.data?.role}</strong>
                         </div>
                         <div className="mb-3">
-                            <small>Department</small> <br />
+                            <small>{languageText.label.department}</small> <br />
                             <strong>{account?.data?.department}</strong>
                         </div>
                         <div className="mb-3">
-                            <small>Division</small> <br />
+                            <small>{languageText.label.division}</small> <br />
                             <strong>{account?.data?.division}</strong>
                         </div>
                         <div className="mb-3">
-                            <small>User ID</small> <br />
+                            <small>{languageText.label.userId}</small> <br />
                             <strong>{account?.data?.userId}</strong>
                         </div>
                         <div className="mb-4">
-                            <small>Email</small> <br />
+                            <small>{languageText.label.email}</small> <br />
                             <strong>{account?.data?.email}</strong>
                         </div>
                     </div>
@@ -63,14 +64,14 @@ export default function ProfilePage() {
                             size="Small"
                             className="me-3"
                             onClick={() => setEditPassword(true)}>
-                            Edit Password
+                            {languageText.button.editPassword}
                         </Button>
                         <Button 
                             status="Primary" 
                             size="Small"
                             className="me-3"
                             onClick={() => setEditProfile(true)}>
-                            Edit Profile
+                            {languageText.button.editProfile}
                         </Button>
                     </div>
                 </div>

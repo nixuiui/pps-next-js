@@ -48,8 +48,23 @@ const en = {
         forgotPassword: "Forgot Password",
         resetPassword: "Reset Password",
     },
+    title: {
+        profile: "Profile",
+    },
     subtitle: {
         forgotPassword: "Input your email address and follow the intruction sent to your email",
+    },
+    label: {
+        name: "Name",
+        role: "Role",
+        department: "Department",
+        division: "Division",
+        userId: "userId",
+        email: "email",
+    },
+    button: {
+        editPassword: "Edit Password",
+        editProfile: "Edit Profile",
     },
     placeholder: {
         companyName: "Company Name",
